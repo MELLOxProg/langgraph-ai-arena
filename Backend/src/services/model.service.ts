@@ -9,7 +9,7 @@ export const geminiModel = new ChatGoogle({
 });
 
 export const mistralModel = new ChatMistralAI({
-  model: "mistral-medium-latest",
+  model: "mistral-small-latest",
   apiKey: config.MISTRAL_API_KEY,
 });
 
