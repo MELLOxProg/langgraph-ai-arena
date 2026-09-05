@@ -43,6 +43,5 @@ ehthumbs.db
 !.vscode/tasks.json
 !.vscode/launch.json
 
-# Local project image
-**/intuition.jpeg
-**/intuition1.jpeg
+# Local project images
+**/intuition*

@@ -5,7 +5,7 @@ import { ChatGroq } from "@langchain/groq";
 import config from "../config/config.js";
 
 export const geminiModel = new ChatGoogle({
-  model: "gemini-flash-latest",
+  model: "gemini-3.6-flash",
   apiKey: config.GOOGLE_API_KEY,
 });
 
@@ -15,12 +15,12 @@ export const cohereModel = new ChatCohere({
   apiKey: config.COHERE_API_KEY,
 });
 
-export const mistralModel = new ChatMistralAI({
+export const mistralModel = new ChatMistralAI({ 
   model: "mistral-medium-latest",
   apiKey: config.MISTRAL_API_KEY,
 });
 
-export const groqModel = new ChatGroq({
+export const groqModel = new ChatGroq({ // alt to Mistral. in case API exhausted.
   model: "openai/gpt-oss-120b",
   apiKey: process.env.GROQ_API_KEY!,
 });
