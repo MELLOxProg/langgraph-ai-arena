@@ -1,0 +1,102 @@
+/* ── Loading Response ───────────────────────────────────────────────────── */
+.loading-response {
+  display: flex;
+  animation: fadeSlideIn 0.3s ease;
+}
+
+.loading-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: var(--space-lg);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.loading-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--blue);
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.loading-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.loading-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.loading-bar-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.loading-bar-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: 68px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sol-1-label { color: var(--amber); }
+.sol-2-label { color: var(--green); }
+.judge-label { color: var(--purple); }
+
+.loading-track {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-fill {
+  height: 100%;
+  border-radius: 2px;
+  animation: loadingBar 1.5s ease-in-out infinite;
+}
+
+.loading-fill-amber { background: var(--amber); animation-delay: 0s; }
+.loading-fill-green { background: var(--green); animation-delay: 0.2s; }
+.loading-fill-purple { background: var(--purple); animation-delay: 0.4s; }
+
+@keyframes loadingBar {
+  0%   { width: 0%;   margin-left: 0%; }
+  50%  { width: 75%;  margin-left: 0%; }
+  100% { width: 0%;   margin-left: 100%; }
+}

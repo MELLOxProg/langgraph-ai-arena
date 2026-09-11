@@ -1,0 +1,13 @@
+/* ── Score Badge ────────────────────────────────────────────────────────── */
+.score-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 6px var(--glow, rgba(63,185,80,0.3)));
+  transition: transform 0.2s ease;
+}
+
+.score-badge:hover {
+  transform: scale(1.05);
+}

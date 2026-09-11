@@ -1,0 +1,152 @@
+/* ── Markdown Content ───────────────────────────────────────────────────── */
+.md-content {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.md-h1 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-top: 0.25rem;
+}
+
+.md-h2 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.md-h3 {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: -0.01em;
+}
+
+.md-hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.25rem 0;
+}
+
+.md-p {
+  font-size: 0.83rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.md-bold {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.md-inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: rgba(88, 166, 255, 0.08);
+  color: var(--blue);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(88, 166, 255, 0.15);
+}
+
+/* Code Blocks */
+.md-code-block {
+  background: var(--bg-canvas);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.md-code-lang {
+  padding: 5px var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.md-pre {
+  overflow-x: auto;
+  padding: var(--space-md);
+  margin: 0;
+}
+
+.md-pre code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: #e6edf3;
+  white-space: pre;
+  display: block;
+}
+
+/* Tables */
+.md-table-wrapper {
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.md-th {
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+}
+
+.md-tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+.md-td {
+  padding: 7px 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+}
+
+/* Lists */
+.md-ul {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  list-style: none;
+}
+
+.md-li {
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.md-li::before {
+  content: '›';
+  position: absolute;
+  left: -0.9rem;
+  color: var(--blue);
+  font-weight: 700;
+}
