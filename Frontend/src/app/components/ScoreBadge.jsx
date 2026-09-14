@@ -9,7 +9,6 @@ export default function ScoreBadge({ score, color = 'green' }) {
   const r = 22
   const circumference = 2 * Math.PI * r
   const pct = (score / 10) * circumference
-  const scoreColor = score >= 9 ? '#3fb950' : score >= 7 ? '#f0883e' : '#f85149'
 
   return (
     <div
@@ -34,11 +33,11 @@ export default function ScoreBadge({ score, color = 'green' }) {
         <text
           x="30" y="34"
           textAnchor="middle"
-          fill={scoreColor}
+          fill={c.stroke}
           fontSize="13"
           fontWeight="700"
           fontFamily="JetBrains Mono, monospace"
-          style={{ filter: `drop-shadow(0 0 3px ${scoreColor})` }}
+          style={{ filter: `drop-shadow(0 0 3px ${c.stroke})` }}
         >
           {score}/10
         </text>

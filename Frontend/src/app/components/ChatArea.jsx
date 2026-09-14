@@ -22,23 +22,60 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
     <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0e14]">
 
       {/* ── Header ── */}
-      <header className="flex items-center justify-between px-6 h-14 min-h-14 bg-[rgba(22,27,34,0.85)] backdrop-blur-md border-b border-line gap-4 flex-shrink-0">
+      <header className="flex items-center justify-between px-6 h-14 min-h-14 bg-[rgba(22,27,34,0.85)] backdrop-blur-md border-b border-line gap-3 shrink-0">
+
+        {/* Left: title + subtitle */}
         <div className="flex flex-col gap-0.5 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[0.9rem] font-semibold text-fg max-w-md overflow-hidden text-ellipsis whitespace-nowrap">
-              {chat?.title || 'AI Arena'}
-            </span>
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[rgba(63,185,80,0.1)] border border-[rgba(63,185,80,0.3)] font-mono text-[0.62rem] font-semibold text-green tracking-[0.05em] uppercase flex-shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-green animate-pulse-glow" />
-              Live
-            </span>
-          </div>
-          <div className="font-mono text-[0.65rem] text-fg-dim tracking-[0.04em]">
+          <span className="text-[0.9rem] font-semibold text-fg max-w-65 overflow-hidden text-ellipsis whitespace-nowrap">
+            {chat?.title || 'AI Arena'}
+          </span>
+          <div className="font-mono text-[0.62rem] text-fg-dim tracking-[0.04em]">
             Dual-Solution Code Analysis Engine
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Centre: Live Benchmark + Model VS Model */}
+        <div className="flex items-center gap-2 flex-1 justify-center">
+
+          {/* Live Benchmark pill */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[rgba(63,185,80,0.08)] border border-[rgba(63,185,80,0.25)] shrink-0">
+            {/* Outer ring pulses; inner dot stays solid */}
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green opacity-60" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green" />
+            </span>
+            <span className="font-mono text-[0.68rem] font-semibold text-green tracking-[0.06em] uppercase whitespace-nowrap">
+              Live Benchmark
+            </span>
+          </div>
+
+          {/* Model A — amber, matches Solution 1 card */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[rgba(240,136,62,0.08)] border border-[rgba(240,136,62,0.25)]">
+            <span className="w-2 h-2 rounded-full bg-amber shrink-0" />
+            <span className="font-mono text-[0.7rem] font-semibold text-amber whitespace-nowrap">
+              gpt-oss-120b
+            </span>
+          </div>
+
+          {/* VS separator */}
+          <span
+            className="font-mono text-[0.65rem] font-bold tracking-widest uppercase select-none"
+            style={{ color: 'transparent', backgroundImage: 'linear-gradient(135deg,#58a6ff,#bc8cff)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}
+          >
+            vs
+          </span>
+
+          {/* Model B — green, matches Solution 2 card */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[rgba(63,185,80,0.08)] border border-[rgba(63,185,80,0.25)]">
+            <span className="w-2 h-2 rounded-full bg-green shrink-0" />
+            <span className="font-mono text-[0.7rem] font-semibold text-green whitespace-nowrap">
+              command-a-03-2025
+            </span>
+          </div>
+        </div>
+
+        {/* Right: action buttons */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             id="fork-btn"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-elevated text-fg-muted border border-line text-[0.75rem] font-medium hover:text-fg hover:border-fg-dim hover:bg-[rgba(255,255,255,0.03)] transition-all duration-150 cursor-pointer"

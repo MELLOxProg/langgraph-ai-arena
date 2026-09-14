@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import hljs from 'highlight.js'
+import { useToast } from './Toast'
 
 /**
  * Lightweight markdown renderer with highlight.js syntax highlighting.
@@ -16,6 +18,76 @@ export default function MarkdownContent({ content }) {
   )
 }
 
+/** Copy-button code block — needs hooks so it lives as its own component */
+function CodeBlock({ lang, text }) {
+  const addToast = useToast()
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true)
+      addToast('Code copied to clipboard')
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  let highlightedHtml
+  const normalizedLang = lang?.toLowerCase().trim()
+  try {
+    if (normalizedLang && hljs.getLanguage(normalizedLang)) {
+      highlightedHtml = hljs.highlight(text, { language: normalizedLang }).value
+    } else {
+      highlightedHtml = hljs.highlightAuto(text).value
+    }
+  } catch {
+    highlightedHtml = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+  }
+
+  return (
+    <div className="md-code-block">
+      {/* Header row: language label + copy button */}
+      <div className="md-code-lang flex items-center justify-between">
+        <span>{lang || 'code'}</span>
+        <button
+          onClick={handleCopy}
+          title="Copy code"
+          className="
+            flex items-center gap-1 px-2 py-0.5 rounded
+            text-fg-dim hover:text-fg
+            bg-transparent hover:bg-[rgba(255,255,255,0.06)]
+            border border-transparent hover:border-line
+            transition-all duration-150 cursor-pointer
+            font-mono text-[0.6rem] tracking-[0.03em]
+          "
+        >
+          {copied ? (
+            <>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#3fb950" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span style={{ color: '#3fb950' }}>Copied!</span>
+            </>
+          ) : (
+            <>
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z" />
+                <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z" />
+              </svg>
+              Copy
+            </>
+          )}
+        </button>
+      </div>
+      <pre className="md-pre hljs">
+        <code dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
+      </pre>
+    </div>
+  )
+}
+
 function renderBlock(block, i) {
   switch (block.type) {
     case 'h1': return <h1 key={i} className="md-h1">{inlineRender(block.text)}</h1>
@@ -23,36 +95,8 @@ function renderBlock(block, i) {
     case 'h3': return <h3 key={i} className="md-h3">{inlineRender(block.text)}</h3>
     case 'hr': return <hr key={i} className="md-hr" />
 
-    case 'code': {
-      const lang = block.lang?.toLowerCase().trim()
-      let highlightedHtml
+    case 'code': return <CodeBlock key={i} lang={block.lang} text={block.text} />
 
-      try {
-        if (lang && hljs.getLanguage(lang)) {
-          highlightedHtml = hljs.highlight(block.text, { language: lang }).value
-        } else {
-          // Auto-detect language when none specified or unknown
-          highlightedHtml = hljs.highlightAuto(block.text).value
-        }
-      } catch {
-        // Escape raw text as fallback
-        highlightedHtml = block.text
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-      }
-
-      return (
-        <div key={i} className="md-code-block">
-          {block.lang && (
-            <div className="md-code-lang">{block.lang}</div>
-          )}
-          <pre className="md-pre hljs">
-            <code dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
-          </pre>
-        </div>
-      )
-    }
 
     case 'table': return (
       <div key={i} className="md-table-wrapper">

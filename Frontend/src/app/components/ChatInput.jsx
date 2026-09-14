@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import axios from 'axios'
 
 export default function ChatInput({ value, onChange, onSend, onKeyDown, disabled }) {
   const textareaRef = useRef(null)
@@ -11,7 +12,7 @@ export default function ChatInput({ value, onChange, onSend, onKeyDown, disabled
   }
 
   return (
-    <div className="px-6 py-4 bg-[rgba(22,27,34,0.9)] backdrop-blur-xl border-t border-line flex flex-col gap-2 flex-shrink-0">
+    <div className="px-6 py-4 bg-[rgba(22,27,34,0.9)] backdrop-blur-xl border-t border-line flex flex-col gap-2 shrink-0">
 
       {/* Input Wrapper */}
       <div
@@ -27,7 +28,7 @@ export default function ChatInput({ value, onChange, onSend, onKeyDown, disabled
           className="
             flex-1 bg-transparent border-none outline-none
             text-fg text-[0.88rem] leading-relaxed
-            min-h-[22px] max-h-[160px] overflow-y-auto
+            min-h-5.5 max-h-40 overflow-y-auto
             py-1.5 resize-none placeholder:text-fg-dim
             disabled:opacity-50 disabled:cursor-not-allowed
             font-sans

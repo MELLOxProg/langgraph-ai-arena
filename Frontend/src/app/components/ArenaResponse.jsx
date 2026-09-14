@@ -24,14 +24,14 @@ export default function ArenaResponse({ message }) {
           `}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-[rgba(255,255,255,0.02)] flex-shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-[rgba(255,255,255,0.02)] shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-7 h-7 rounded-md flex items-center justify-center font-mono text-[0.7rem] font-bold tracking-[0.04em] bg-[rgba(240,136,62,0.15)] text-amber border border-[rgba(240,136,62,0.3)]">
                 S1
               </span>
               <div>
                 <div className="text-[0.85rem] font-semibold text-fg">Solution 1</div>
-                <div className="font-mono text-[0.62rem] text-fg-dim tracking-[0.04em] mt-0.5">Hash Map + Validation</div>
+                <div className="font-mono text-[0.80rem] text-fg-dim tracking-[0.04em] mt-0.5 font-black">Groq</div>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -48,14 +48,14 @@ export default function ArenaResponse({ message }) {
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto max-h-[520px] p-4">
+          <div className="flex-1 overflow-y-auto max-h-130 p-4">
             <MarkdownContent content={solution1} />
           </div>
 
           {/* Footer — Judge */}
-          <div className="px-4 py-4 border-t border-line bg-[rgba(240,136,62,0.03)] flex-shrink-0">
+          <div className="px-4 py-4 border-t border-line bg-[rgba(240,136,62,0.03)] shrink-0">
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1 font-mono text-[0.65rem] font-semibold tracking-[0.05em] uppercase text-purple">
+              <div className="flex items-center gap-1 font-mono text-[0.65rem] font-semibold tracking-wider uppercase text-purple">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 2a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 2ZM8 11a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z" />
                 </svg>
@@ -79,14 +79,14 @@ export default function ArenaResponse({ message }) {
           `}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-[rgba(255,255,255,0.02)] flex-shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-[rgba(255,255,255,0.02)] shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-7 h-7 rounded-md flex items-center justify-center font-mono text-[0.7rem] font-bold tracking-[0.04em] bg-[rgba(63,185,80,0.15)] text-green border border-[rgba(63,185,80,0.3)]">
                 S2
               </span>
               <div>
                 <div className="text-[0.85rem] font-semibold text-fg">Solution 2</div>
-                <div className="font-mono text-[0.62rem] text-fg-dim tracking-[0.04em] mt-0.5">Minimal Hash Map</div>
+                <div className="font-mono text-[0.80rem] text-fg-dim tracking-[0.04em] mt-0.5 font-black">Cohere</div>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -103,14 +103,14 @@ export default function ArenaResponse({ message }) {
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto max-h-[520px] p-4">
+          <div className="flex-1 overflow-y-auto max-h-130 p-4">
             <MarkdownContent content={solution2} />
           </div>
 
           {/* Footer — Judge */}
-          <div className="px-4 py-4 border-t border-line bg-[rgba(63,185,80,0.03)] flex-shrink-0">
+          <div className="px-4 py-4 border-t border-line bg-[rgba(63,185,80,0.03)] shrink-0">
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1 font-mono text-[0.65rem] font-semibold tracking-[0.05em] uppercase text-purple">
+              <div className="flex items-center gap-1 font-mono text-[0.65rem] font-semibold tracking-wider uppercase text-purple">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 2a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 2ZM8 11a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z" />
                 </svg>
@@ -140,7 +140,7 @@ export default function ArenaResponse({ message }) {
             <span className="text-[1.4rem] drop-shadow-[0_0_8px_rgba(188,140,255,0.5)]">⚖️</span>
             <div>
               <div className="text-base font-bold text-fg">Judge Consensus Verdict</div>
-              <div className="font-mono text-[0.65rem] text-purple tracking-[0.05em] mt-0.5">
+              <div className="font-mono text-[0.65rem] text-purple tracking-wider mt-0.5">
                 Automated Code Quality Analysis
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function ArenaResponse({ message }) {
                 Solution 1
               </span>
             </div>
-            <span className="font-mono text-[0.8rem] font-bold text-fg-dim tracking-[0.1em]">VS</span>
+            <span className="font-mono text-[0.8rem] font-bold text-fg-dim tracking-widest">VS</span>
             <div className={`flex flex-col items-center gap-1 transition-transform duration-200 ${winner === 2 ? 'scale-110' : ''}`}>
               <span
                 className="font-mono text-[2.5rem] font-bold leading-none"
@@ -182,13 +182,13 @@ export default function ArenaResponse({ message }) {
         {/* Verdict Summary */}
         <div className="relative flex flex-col gap-4">
           <p className="text-[0.83rem] leading-relaxed text-fg-muted px-4 py-2 rounded-md border-l-2 border-amber bg-[rgba(240,136,62,0.04)]">
-            <span className="font-mono text-[0.65rem] font-bold tracking-[0.05em] uppercase text-amber mr-2">
+            <span className="font-mono text-[0.65rem] font-bold tracking-wider uppercase text-amber mr-2">
               S1 Analysis:
             </span>
             {judge.solution_1_feedback}
           </p>
           <p className="text-[0.83rem] leading-relaxed text-fg-muted px-4 py-2 rounded-md border-l-2 border-green bg-[rgba(63,185,80,0.04)]">
-            <span className="font-mono text-[0.65rem] font-bold tracking-[0.05em] uppercase text-green mr-2">
+            <span className="font-mono text-[0.65rem] font-bold tracking-wider uppercase text-green mr-2">
               S2 Analysis:
             </span>
             {judge.solution_2_feedback}

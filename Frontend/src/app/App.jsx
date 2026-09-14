@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
+import axios from 'axios'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import { SAMPLE_DATA } from './data/sampleData'
+import { ToastProvider } from './components/Toast'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 // Unique ID generator
 let msgId = 0
@@ -46,13 +50,14 @@ function App() {
     setActiveChatId(id)
   }
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputText.trim() || isLoading) return
 
+    const problem = inputText.trim()
     const userMsg = {
       id: nextId(),
       type: 'user',
-      text: inputText.trim(),
+      text: problem,
       timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     }
 
@@ -64,7 +69,7 @@ function App() {
           ? {
               ...c,
               title: isNewChat
-                ? inputText.trim().slice(0, 48) + (inputText.length > 48 ? '…' : '')
+                ? problem.slice(0, 48) + (problem.length > 48 ? '…' : '')
                 : c.title,
               messages: [...c.messages, userMsg],
             }
@@ -74,14 +79,16 @@ function App() {
     setInputText('')
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/invoke`, { input: problem })
+      const result = response.data.data
       const arenaMsg = {
         id: nextId(),
         type: 'arena',
-        solution1: SAMPLE_DATA.solution_1,
-        solution2: SAMPLE_DATA.solution_2,
-        judge: SAMPLE_DATA.judge,
-        problem: inputText.trim(),
+        solution1: result.solution_1,
+        solution2: result.solution_2,
+        judge: result.judge,
+        problem,
         timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
       }
       setChats((prev) =>
@@ -91,26 +98,31 @@ function App() {
             : c
         )
       )
-      setIsLoading(false)
-    }, 1800)
+      } catch (error) {
+        console.error('Failed to invoke arena graph:', error)
+      } finally {
+        setIsLoading(false)
+      }
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-canvas">
-      <Sidebar
-        chats={chats}
-        activeChatId={activeChatId}
-        onSelectChat={setActiveChatId}
-        onNewChat={handleNewChat}
-      />
-      <ChatArea
-        chat={activeChat}
-        isLoading={isLoading}
-        inputText={inputText}
-        onInputChange={setInputText}
-        onSend={handleSend}
-      />
-    </div>
+    <ToastProvider>
+      <div className="flex h-screen w-screen overflow-hidden bg-canvas">
+        <Sidebar
+          chats={chats}
+          activeChatId={activeChatId}
+          onSelectChat={setActiveChatId}
+          onNewChat={handleNewChat}
+        />
+        <ChatArea
+          chat={activeChat}
+          isLoading={isLoading}
+          inputText={inputText}
+          onInputChange={setInputText}
+          onSend={handleSend}
+        />
+      </div>
+    </ToastProvider>
   )
 }
 
