@@ -4,7 +4,7 @@ const HISTORY_CHATS = [
   { id: 'h3', title: 'Graph BFS Shortest Path', group: 'This Week' },
 ]
 
-export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat }) {
+export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, onLogout }) {
   return (
     <aside className="w-[272px] min-w-[272px] h-screen bg-canvas border-r border-line flex flex-col overflow-hidden">
 
@@ -124,6 +124,7 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat }
 
       {/* ── Footer ── */}
       <div className="border-t border-line px-4 py-4 flex flex-col gap-2 flex-shrink-0">
+        {onLogout && <button type="button" onClick={onLogout} className="text-left text-[0.75rem] text-fg-muted hover:text-fg">Log out</button>}
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green shadow-[0_0_6px_rgba(63,185,80,0.6)] animate-pulse-glow" />
           <span className="font-mono text-[0.65rem] text-fg-dim tracking-[0.04em]">

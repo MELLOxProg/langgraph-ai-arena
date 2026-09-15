@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import axios from 'axios'
 
 export default function ChatInput({ value, onChange, onSend, onKeyDown, disabled }) {
   const textareaRef = useRef(null)

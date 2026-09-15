@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import hljs from 'highlight.js'
-import { useToast } from './Toast'
+import { useToast } from './useToast'
 
 /**
  * Lightweight markdown renderer with highlight.js syntax highlighting.

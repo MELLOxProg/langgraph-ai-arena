@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useCallback, useRef } from 'react'
-
-const ToastContext = createContext(null)
+import { useState, useCallback, useRef } from 'react'
+import { ToastContext } from './toast.context'
 
 /** Global toast state. Wrap your app with <ToastProvider>. */
 export function ToastProvider({ children }) {
@@ -66,8 +65,3 @@ export function ToastProvider({ children }) {
 }
 
 /** Returns an `addToast(message)` function from anywhere inside the tree. */
-export function useToast() {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error('useToast must be used inside <ToastProvider>')
-  return ctx
-}

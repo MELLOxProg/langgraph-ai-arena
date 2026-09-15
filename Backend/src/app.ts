@@ -1,6 +1,11 @@
 import express from "express";
 import cors from "cors";
-import runGraph from "./ai/graph.ai.js";
+import cookieParser from "cookie-parser";
+import passport from "./config/passport.js";
+import authRoutes from "./routes/auth.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
+import { authUser } from "./middlewares/auth.middleware.js";
+import { sendMessage } from "./controllers/chat.controller.js";
 
 const app = express();
 
@@ -19,35 +24,20 @@ app.use(cors({
 
     callback(new Error("Origin is not allowed by CORS policy"));
   },
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "DELETE"],
   credentials: true,
 }));
 app.use(express.json());
+app.use(cookieParser());
+app.use(passport.initialize());
 
-app.get("/", async(req, res) => {
-  const result = await runGraph(`You are given an array of integers and a target integer.
-
-Write a JavaScript function that returns the indices of two numbers whose sum equals the target.
-
-Requirements:
-- Return the indices of the two numbers.
-- You may not use the same array element twice.
-- Aim for better than O(n²) time complexity.
-- Handle edge cases appropriately.
-
-Also provide Jest test cases and briefly explain the time and space complexity.`)
-  res.json(result)
-});
-
+app.use("/api/auth", authRoutes);
+app.use("/api/chats", chatRoutes);
 
 app.post("/invoke", async(req, res) => {
-const {input} = req.body;
-const result = await runGraph(input);
-res.status(200).json({
-  message:"Graph invoked successfully",
-  success: true,
-  data: result
-});
+  req.body.message = req.body.input;
+  req.body.chat = req.body.chatId;
+  return authUser(req, res, () => sendMessage(req, res));
 });
 
 
