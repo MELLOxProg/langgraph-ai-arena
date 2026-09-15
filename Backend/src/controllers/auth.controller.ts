@@ -2,13 +2,16 @@ import bcrypt from "bcryptjs";
 import type { Request, Response } from "express";
 import userModel from "../models/user.model.js";
 import { setAuthCookie } from "../services/auth.service.js";
+import jwt from "jsonwebtoken";
+import { blacklistToken } from "../config/cache.js";
 
 function publicUser(user: { _id: unknown; username: string; email: string }) {
   return { id: user._id, username: user.username, email: user.email };
 }
 
 export async function register(req: Request, res: Response) {
-  const { username, email, password } = req.body as { username?: string; email?: string; password?: string };
+  const { username, email: rawEmail, password } = req.body as { username?: string; email?: string; password?: string };
+  const email = rawEmail?.trim().toLowerCase();
   if (!username || !email || !password || password.length < 6) return res.status(400).json({ message: "Username, email, and a password of at least 6 characters are required" });
   const existing = await userModel.findOne({ $or: [{ email }, { username }] });
   if (existing) return res.status(400).json({ message: "User already registered" });
@@ -18,7 +21,8 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-  const { email, password } = req.body as { email?: string; password?: string };
+  const { email: rawEmail, password } = req.body as { email?: string; password?: string };
+  const email = rawEmail?.trim().toLowerCase();
   const user = await userModel.findOne({ email }).select("+password");
   if (!user || !password || !(await bcrypt.compare(password, user.password || ""))) return res.status(400).json({ message: "Invalid credentials." });
   setAuthCookie(res, { id: String(user._id), username: user.username });
@@ -31,7 +35,17 @@ export async function getMe(req: Request, res: Response) {
   return res.json({ message: "User retrieved successfully", user });
 }
 
-export function logout(_req: Request, res: Response) {
+export async function logout(req: Request, res: Response) {
+  const token = req.cookies?.token as string | undefined;
+  if (token) {
+    const decoded = jwt.decode(token) as { exp?: number } | null;
+    const ttlSeconds = decoded?.exp ? decoded.exp - Math.floor(Date.now() / 1000) : 60 * 60;
+    try {
+      await blacklistToken(token, ttlSeconds);
+    } catch (error) {
+      console.error("Failed to blacklist logout token:", error instanceof Error ? error.message : error);
+    }
+  }
   res.clearCookie("token");
   return res.json({ message: "User logged out successfully" });
 }

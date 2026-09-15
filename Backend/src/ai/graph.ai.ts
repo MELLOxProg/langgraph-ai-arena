@@ -1,10 +1,18 @@
 import { StateGraph, type GraphNode, StateSchema, START, END, type CompiledStateGraph  } from "@langchain/langgraph";
 import z from "zod";
-import { geminiModel, cohereModel, groqModel } from "./model.ai.js";
-import { createAgent, HumanMessage, providerStrategy } from "langchain";
+import { cohereModel, groqModel } from "./model.ai.js";
+import { createAgent, HumanMessage, providerStrategy, SystemMessage, tool } from "langchain";
+import { searchInternet } from "../services/internet.service.js";
+
+const searchInternetTool = tool(searchInternet, {
+  name: "searchInternet",
+  description: "Search the web for current or external information needed to solve the coding challenge.",
+  schema: z.object({ query: z.string().describe("The web search query") }),
+});
 
 const state = new StateSchema({
   problem: z.string().default(""),
+  context: z.string().default(""),
   solution_1: z.string().default(""),
   solution_2: z.string().default(""),
   judge: z.object({
@@ -16,13 +24,15 @@ const state = new StateSchema({
 });
 
 const solutionNode: GraphNode<typeof state> = async (state) => {
+  const context = state.context ? `\n\nPrevious conversation context:\n${state.context}` : "";
+  const systemPrompt = "You are one of two competing coding assistants. Solve the latest user challenge carefully. Use the searchInternet tool when current or external information is needed. Treat previous conversation context as background and answer the latest request directly.";
     const [groqResponse, cohereResponse] = await Promise.all([
-        groqModel.invoke(state.problem),
-        cohereModel.invoke(state.problem)
-    ])
+    createAgent({ model: groqModel, tools: [searchInternetTool], systemPrompt }).invoke({ messages: [new SystemMessage(systemPrompt), new HumanMessage(`${state.problem}${context}`)] }),
+    cohereModel.invoke(`${systemPrompt}\n\n${state.problem}${context}`),
+  ]);
     return {
-        solution_1: groqResponse.text,
-        solution_2: cohereResponse.text,
+      solution_1: groqResponse.messages.at(-1)?.text || "No solution was returned.",
+    solution_2: cohereResponse.text || "No solution was returned.",
     }
 };
 
@@ -31,7 +41,7 @@ const judgeNode: GraphNode<typeof state> = async (state) => {
   const { problem, solution_1, solution_2 } = state
 
   const judge = createAgent({
-    model: geminiModel,
+    model: groqModel,
     responseFormat: providerStrategy(z.object({
       solution_1_score: z.number().min(0).max(10),
       solution_2_score: z.number().min(0).max(10),
@@ -125,9 +135,10 @@ const graph = new StateGraph(state)
 .compile()
 
 
-export default async function runGraph(problem:string) {
+export default async function runGraph(problem: string, context = "") {
   const result = await graph.invoke({
-    problem: problem
+  problem,
+  context,
   })
   return result
   

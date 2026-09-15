@@ -1,0 +1,5 @@
+@use './login.scss';
+
+.register-page {
+  @extend .login-page;
+}

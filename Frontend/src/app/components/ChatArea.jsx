@@ -4,13 +4,12 @@ import ArenaResponse from './ArenaResponse'
 import LoadingResponse from './LoadingResponse'
 import ChatInput from './ChatInput'
 
-export default function ChatArea({ chat, isLoading, inputText, onInputChange, onSend }) {
+export default function ChatArea({ chat, isLoading, inputText, onInputChange, onSend, onExport }) {
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [chat?.messages, isLoading])
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -72,21 +71,10 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
               command-a-03-2025
             </span>
           </div>
-        </div>
-
-        {/* Right: action buttons */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            id="fork-btn"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-elevated text-fg-muted border border-line text-[0.75rem] font-medium hover:text-fg hover:border-fg-dim hover:bg-[rgba(255,255,255,0.03)] transition-all duration-150 cursor-pointer"
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M5 3.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm0 2.122a2.25 2.25 0 1 0-1.5 0v.878A2.25 2.25 0 0 0 5.75 8.5h1.5v2.128a2.251 2.251 0 1 0 1.5 0V8.5h1.5a2.25 2.25 0 0 0 2.25-2.25v-.878a2.25 2.25 0 1 0-1.5 0v.878a.75.75 0 0 1-.75.75h-4.5A.75.75 0 0 1 5 6.25v-.878zm3.75 7.378a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm3-8.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0z" />
-            </svg>
-            Fork
-          </button>
           <button
             id="export-btn"
+            onClick={onExport}
+            disabled={!chat?.messages?.length}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-elevated text-fg-muted border border-line text-[0.75rem] font-medium hover:text-fg hover:border-fg-dim hover:bg-[rgba(255,255,255,0.03)] transition-all duration-150 cursor-pointer"
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">

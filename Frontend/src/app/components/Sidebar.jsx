@@ -1,10 +1,4 @@
-const HISTORY_CHATS = [
-  { id: 'h1', title: 'Binary Search Tree Traversal', group: 'Yesterday' },
-  { id: 'h2', title: 'Fibonacci with Memoization', group: 'Yesterday' },
-  { id: 'h3', title: 'Graph BFS Shortest Path', group: 'This Week' },
-]
-
-export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, onLogout }) {
+export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, onLogout, username }) {
   return (
     <aside className="w-[272px] min-w-[272px] h-screen bg-canvas border-r border-line flex flex-col overflow-hidden">
 
@@ -54,12 +48,8 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
 
       {/* ── Nav ── */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
-        {/* Today — live chats */}
         {chats.length > 0 && (
           <div className="mb-4">
-            <div className="font-mono text-[0.62rem] font-semibold tracking-[0.08em] uppercase text-fg-dim px-2 py-1 mb-1">
-              Today
-            </div>
             {chats.map((chat) => {
               const active = activeChatId === chat.id
               return (
@@ -88,43 +78,11 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
             })}
           </div>
         )}
-
-        {/* History groups */}
-        {['Yesterday', 'This Week'].map((group) => {
-          const items = HISTORY_CHATS.filter((h) => h.group === group)
-          if (!items.length) return null
-          return (
-            <div key={group} className="mb-4">
-              <div className="font-mono text-[0.62rem] font-semibold tracking-[0.08em] uppercase text-fg-dim px-2 py-1 mb-1">
-                {group}
-              </div>
-              {items.map((chat) => (
-                <button
-                  key={chat.id}
-                  id={`chat-item-${chat.id}`}
-                  className="
-                    w-full flex items-center gap-2 px-2 py-[0.45rem] rounded-md
-                    text-[0.8rem] text-left transition-all duration-150 mb-0.5
-                    border border-transparent bg-transparent text-fg-muted
-                    hover:bg-elevated hover:text-fg cursor-pointer
-                  "
-                >
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="flex-shrink-0 opacity-60">
-                    <path d="M1 1h10v7H7l-3 3V8H1V1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                  </svg>
-                  <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
-                    {chat.title}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )
-        })}
       </nav>
 
       {/* ── Footer ── */}
       <div className="border-t border-line px-4 py-4 flex flex-col gap-2 flex-shrink-0">
-        {onLogout && <button type="button" onClick={onLogout} className="text-left text-[0.75rem] text-fg-muted hover:text-fg">Log out</button>}
+  
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green shadow-[0_0_6px_rgba(63,185,80,0.6)] animate-pulse-glow" />
           <span className="font-mono text-[0.65rem] text-fg-dim tracking-[0.04em]">
@@ -139,12 +97,15 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
             A
           </div>
           <div>
-            <div className="text-[0.8rem] font-semibold text-fg">alex.dev</div>
+            <div className="text-[0.8rem] font-semibold text-fg overflow-hidden text-ellipsis whitespace-nowrap">{username || 'Arena user'}</div>
             <div className="font-mono text-[0.6rem] text-purple font-semibold tracking-[0.04em]">
               Pro Tier
             </div>
+  
           </div>
+                      
         </div>
+          {onLogout && <button type="button" onClick={onLogout} className="logout-button"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 2.5H3.25A1.25 1.25 0 0 0 2 3.75v8.5a1.25 1.25 0 0 0 1.25 1.25H6M9.5 5.5 13 8l-3.5 2.5M13 8H6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>Log out</button>}
       </div>
     </aside>
   )

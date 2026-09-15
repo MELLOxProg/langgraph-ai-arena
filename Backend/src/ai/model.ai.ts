@@ -9,18 +9,17 @@ export const geminiModel = new ChatGoogle({
   apiKey: config.GOOGLE_API_KEY,
 });
 
-
 export const cohereModel = new ChatCohere({
   model: "command-a-03-2025",
   apiKey: config.COHERE_API_KEY,
 });
 
-export const mistralModel = new ChatMistralAI({ 
+export const mistralModel = new ChatMistralAI({
   model: "mistral-medium-latest",
   apiKey: config.MISTRAL_API_KEY,
 });
 
-export const groqModel = new ChatGroq({ // alt to Mistral. in case API exhausted.
+export const groqModel = new ChatGroq({
   model: "openai/gpt-oss-120b",
-  apiKey: process.env.GROQ_API_KEY!,
+  apiKey: config.GROQ_API_KEY,
 });

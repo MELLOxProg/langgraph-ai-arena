@@ -13,7 +13,11 @@ export async function sendMessage(req: Request, res: Response) {
   if (!chat) chat = await chatModel.create({ user: req.user!.id, title: await generateChatTitle(message) });
 
   await messageModel.create({ chat: chat._id, content: message, role: "user" });
-  const result = await runGraph(message);
+  const history = await messageModel.find({ chat: chat._id }).sort({ createdAt: 1 });
+  const context = history
+    .map((entry) => `${entry.role === "user" ? "User" : "Arena response"}: ${entry.content}`)
+    .join("\n\n");
+  const result = await runGraph(message, context);
   const aiMessage = await messageModel.create({ chat: chat._id, content: JSON.stringify(result), role: "ai" });
   return res.status(201).json({ chat, aiMessage, data: result });
 }

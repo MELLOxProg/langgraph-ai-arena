@@ -3,7 +3,7 @@ import axios from 'axios'
 import Sidebar from './components/Sidebar'
 import ChatArea from './components/ChatArea'
 import { ToastProvider } from './components/Toast'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import Login from '../features/auth/pages/Login'
 import Register from '../features/auth/pages/Register'
 import Protected from '../features/auth/components/Protected'
@@ -16,6 +16,7 @@ const nextId = () => ++msgId
 
 function App() {
   const { user, handleLogout } = useAuth()
+  const navigate = useNavigate()
   const [chats, setChats] = useState([])
   const [activeChatId, setActiveChatId] = useState(null)
   const [inputText, setInputText] = useState('')
@@ -123,7 +124,35 @@ function App() {
     setChats((current) => current.map((chat) => chat.id === id ? { ...chat, messages } : chat))
   }
 
-  return <Routes><Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} /><Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} /><Route path="/" element={<Protected><ToastProvider><div className="flex h-screen w-screen overflow-hidden bg-canvas"><Sidebar chats={chats} activeChatId={activeChatId} onSelectChat={selectChat} onNewChat={handleNewChat} onLogout={handleLogout} /><ChatArea chat={activeChat} isLoading={isLoading} inputText={inputText} onInputChange={setInputText} onSend={handleSend} /></div></ToastProvider></Protected>} /></Routes>
+  async function logoutAndRedirect() {
+    try {
+      await handleLogout()
+    } finally {
+      navigate('/login', { replace: true })
+    }
+  }
+
+  function exportActiveChat() {
+    if (!activeChat?.messages?.length) return
+
+    const exportData = {
+      id: activeChat.id,
+      title: activeChat.title,
+      exportedAt: new Date().toISOString(),
+      messages: activeChat.messages,
+    }
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${(activeChat.title || 'arena-chat').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'arena-chat'}.json`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  return <Routes><Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} /><Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} /><Route path="/" element={<Protected><ToastProvider><div className="flex h-screen w-screen overflow-hidden bg-canvas"><Sidebar chats={chats} activeChatId={activeChatId} onSelectChat={selectChat} onNewChat={handleNewChat} onLogout={logoutAndRedirect} username={user?.username} /><ChatArea chat={activeChat} isLoading={isLoading} inputText={inputText} onInputChange={setInputText} onSend={handleSend} onExport={exportActiveChat} /></div></ToastProvider></Protected>} /></Routes>
 }
 
 export default App
