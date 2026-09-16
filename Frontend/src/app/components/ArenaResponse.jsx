@@ -141,7 +141,7 @@ export default function ArenaResponse({ message }) {
             <div>
               <div className="text-base font-bold text-fg">Judge Consensus Verdict</div>
               <div className="font-mono text-[0.65rem] text-purple tracking-wider mt-0.5">
-                Automated Code Quality Analysis
+                Automated Quality Analysis
               </div>
             </div>
           </div>

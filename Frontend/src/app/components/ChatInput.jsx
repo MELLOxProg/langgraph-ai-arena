@@ -94,7 +94,7 @@ export default function ChatInput({ value, onChange, onSend, onKeyDown, disabled
       {/* Footer */}
       <div className="flex items-center justify-between">
         <span className="font-mono text-[0.6rem] text-fg-dim tracking-[0.04em]">
-          AI Arena — Powered by LangGraph Multi-Agent Framework
+          InferTrials — Powered by LangGraph Multi-Agent Framework
         </span>
         <span className="font-mono text-[0.6rem] text-fg-dim tracking-[0.04em]">
           {value.length} chars

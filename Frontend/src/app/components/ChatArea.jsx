@@ -26,7 +26,7 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
         {/* Left: title + subtitle */}
         <div className="flex flex-col gap-0.5 min-w-0">
           <span className="text-[0.9rem] font-semibold text-fg max-w-65 overflow-hidden text-ellipsis whitespace-nowrap">
-            {chat?.title || 'AI Arena'}
+            {chat?.title || 'InferTrials'}
           </span>
           <div className="font-mono text-[0.62rem] text-fg-dim tracking-[0.04em]">
             Dual-Solution Code Analysis Engine
@@ -93,7 +93,11 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
       >
         {!chat?.messages?.length && !isLoading && (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-8 m-auto">
-            <div className="text-5xl mb-6 drop-shadow-[0_0_20px_rgba(88,166,255,0.3)]">⚡</div>
+            <img
+              src="/ai-arena-logo.svg"
+              alt="InferTrials logo"
+              className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_18px_rgba(88,166,255,0.3)]"
+            />
             <h2
               className="text-2xl font-bold mb-2 bg-clip-text text-transparent"
               style={{ backgroundImage: 'linear-gradient(135deg, #58a6ff, #bc8cff)' }}

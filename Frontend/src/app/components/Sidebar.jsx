@@ -1,22 +1,21 @@
 export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, onLogout, username }) {
   return (
-    <aside className="w-[272px] min-w-[272px] h-screen bg-canvas border-r border-line flex flex-col overflow-hidden">
+    <aside className="w-68 min-w-68 h-screen bg-canvas border-r border-line flex flex-col overflow-hidden">
 
       {/* ── Brand ── */}
-      <div className="px-4 py-5 border-b border-line flex-shrink-0">
+      <div className="px-4 py-5 border-b border-line shrink-0">
         <div className="flex items-center gap-2">
-          <span
-            className="text-2xl bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(88,166,255,0.4)]"
-            style={{ backgroundImage: 'linear-gradient(135deg, #58a6ff, #bc8cff)' }}
-          >
-            ⚡
-          </span>
+          <img
+            src="/ai-arena-logo.svg"
+            alt="InferTrials logo"
+            className="w-7 h-7 object-contain drop-shadow-[0_0_10px_rgba(88,166,255,0.35)]"
+          />
           <div>
             <div
               className="font-bold text-[0.95rem] tracking-tight bg-clip-text text-transparent"
               style={{ backgroundImage: 'linear-gradient(135deg, #58a6ff, #bc8cff)' }}
             >
-              AI Arena
+              InferTrials
             </div>
             <div className="font-mono text-[0.65rem] font-semibold text-fg-dim tracking-[0.08em] uppercase">
               v2.4
@@ -26,7 +25,7 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
       </div>
 
       {/* ── New Chat ── */}
-      <div className="px-4 py-4 border-b border-line flex-shrink-0">
+      <div className="px-4 py-4 border-b border-line shrink-0">
         <button
           id="new-chat-btn"
           onClick={onNewChat}
@@ -67,7 +66,7 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
                     }
                   `}
                 >
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`flex-shrink-0 ${active ? 'opacity-100' : 'opacity-60'}`}>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`shrink-0 ${active ? 'opacity-100' : 'opacity-60'}`}>
                     <path d="M1 1h10v7H7l-3 3V8H1V1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
                   </svg>
                   <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
@@ -81,7 +80,7 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
       </nav>
 
       {/* ── Footer ── */}
-      <div className="border-t border-line px-4 py-4 flex flex-col gap-2 flex-shrink-0">
+      <div className="border-t border-line px-4 py-4 flex flex-col gap-2 shrink-0">
   
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green shadow-[0_0_6px_rgba(63,185,80,0.6)] animate-pulse-glow" />
@@ -91,7 +90,7 @@ export default function Sidebar({ chats, activeChatId, onSelectChat, onNewChat, 
         </div>
         <div className="flex items-center gap-2">
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-bold text-white flex-shrink-0"
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-bold text-white shrink-0"
             style={{ backgroundImage: 'linear-gradient(135deg, #58a6ff, #bc8cff)' }}
           >
             A
