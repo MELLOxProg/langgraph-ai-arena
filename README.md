@@ -25,7 +25,7 @@ The project combines a React/Vite dashboard, an Express/TypeScript API, MongoDB 
 - **Arena-based AI workflow:** every coding prompt is evaluated through a LangGraph/LangChain pipeline that generates two independent answers, one from Groq and one from Cohere, with optional Tavily web search for current or external context.
 - **Automated judging:** a dedicated judge agent scores both solutions from 0 to 10, provides concise feedback for each answer, and highlights the winning response in the dashboard.
 - **Persistent chat workspace:** users can create new arena matches, resume saved chats, preserve conversation context across turns, delete chats, and rely on automatic AI-generated chat titles with a fallback title system.
-- **Polished developer-focused UI:** the dashboard includes loading/progress states, markdown rendering, syntax-highlighted code blocks, copy-to-clipboard support, JSON chat export, responsive styling, and dedicated login/register screens.
+- **Polished developer-focused UI:** the dashboard includes loading/progress states, markdown rendering, syntax-highlighted code blocks, copy-to-clipboard support, JSON chat export, responsive styling, dedicated login/register screens, and persistent wallpaper switching for the auth pages.
 - **REST API foundation:** the backend exposes endpoints for authentication, Google OAuth, user lookup, chat listing, message loading, arena invocation, and chat deletion.
 
 ## Architecture
@@ -459,6 +459,36 @@ The model service also configures Mistral `mistral-medium-latest` for alternate 
 The dashboard includes an `Export` action for the active chat. Export runs in the frontend, so it does not require a separate backend endpoint: the app serializes the current chat into a formatted JSON file containing the chat id, title, export timestamp, and all loaded messages, then downloads it with a filename derived from the chat title.
 
 This makes it easy to save an arena match for review, share a debugging session, or keep a local record of the two model responses and Gemini judge verdict.
+
+A sample exported chat is included at `Frontend/public/javascript-factorial.json`. Its structure looks like this:
+
+```json
+{
+  "id": "6aa940f0588821c29991e130",
+  "title": "JavaScript Factorial",
+  "exportedAt": "2026-09-16T15:51:44.496Z",
+  "messages": [
+    {
+      "id": 3,
+      "type": "user",
+      "text": "write a factorial function in js"
+    },
+    {
+      "id": 4,
+      "type": "arena",
+      "solution1": "Here is a clean, reusable factorial implementation in JavaScript...",
+      "solution2": "Here is a simple implementation of a factorial function in JavaScript...",
+      "judge": {
+        "solution_1_score": 9.5,
+        "solution_2_score": 7.5,
+        "solution_1_feedback": "Solution 1 provides a clean, well-documented implementation...",
+        "solution_2_feedback": "Solution 2 implements a straightforward iterative factorial..."
+      },
+      "problem": "write a factorial function in js"
+    }
+  ]
+}
+```
 
 ## Data Model
 

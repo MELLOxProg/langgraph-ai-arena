@@ -1,0 +1,25 @@
+{
+  "id": "6aa940f0588821c29991e130",
+  "title": "JavaScript Factorial",
+  "exportedAt": "2026-09-16T15:51:44.496Z",
+  "messages": [
+    {
+      "id": 3,
+      "type": "user",
+      "text": "write a factorial function in js"
+    },
+    {
+      "id": 4,
+      "type": "arena",
+      "solution1": "Here’s a clean, reusable factorial implementation in JavaScript.  \nI’ll show both the classic **recursive** version (easy to read) and an **iterative** version (safer for large inputs because it avoids call‑stack limits).\n\n```js\n/**\n * Recursive factorial.\n * @param {number} n - Non‑negative integer.\n * @returns {bigint} n! as a BigInt (handles very large results).\n * @throws {RangeError} if n is negative or not an integer.\n */\nfunction factorialRecursive(n) {\n  if (!Number.isInteger(n) || n < 0) {\n    throw new RangeError('Argument must be a non‑negative integer');\n  }\n\n  // Base case\n  if (n === 0 || n === 1) return 1n;\n\n  // Recursive step – use BigInt for large numbers\n  return BigInt(n) * factorialRecursive(n - 1);\n}\n\n/**\n * Iterative factorial.\n * @param {number} n - Non‑negative integer.\n * @returns {bigint} n! as a BigInt.\n * @throws {RangeError} if n is negative or not an integer.\n */\nfunction factorialIterative(n) {\n  if (!Number.isInteger(n) || n < 0) {\n    throw new RangeError('Argument must be a non‑negative integer');\n  }\n\n  let result = 1n;\n  for (let i = 2; i <= n; i++) {\n    result *= BigInt(i);\n  }\n  return result;\n}\n\n/* ------------------- Usage examples ------------------- */\nconsole.log(factorialRecursive(5).toString()); // \"120\"\nconsole.log(factorialIterative(5).toString()); // \"120\"\n\n// Very large factorial (e.g., 100!)\nconsole.log(factorialIterative(100).toString());\n// → \"933262154439441526816992388562667004907159682643816214685929... (truncated)\"\n```\n\n### Why use **BigInt**?\nJavaScript’s native `Number` type is a 64‑bit floating‑point value (IEEE‑754) and loses integer precision beyond 2⁵³ ≈ 9 × 10¹⁵. Factorials grow extremely fast, so even modest inputs (e.g., 20!) exceed that safe integer range. `BigInt` preserves exact integer values for arbitrarily large results.\n\n### Choosing between the two\n- **Recursive**: Very readable, but each call adds a stack frame. Most JavaScript engines have a recursion depth limit (often a few thousand calls). For `n` > ~10 000 you’ll hit a “Maximum call stack size exceeded” error.\n- **Iterative**: Works for any size limited only by memory, making it the safer default for production code.\n\nFeel free to pick the style that best fits your project!",
+      "solution2": "Here’s a simple implementation of a factorial function in JavaScript:\n\n```javascript\nfunction factorial(n) {\n    if (n < 0) {\n        return \"Factorial is not defined for negative numbers.\";\n    }\n    if (n === 0 || n === 1) {\n        return 1;\n    }\n    let result = 1;\n    for (let i = 2; i <= n; i++) {\n        result *= i;\n    }\n    return result;\n}\n\n// Example usage:\nconsole.log(factorial(5)); // Output: 120\n```\n\n### Explanation:\n- The function checks if the input `n` is negative and returns an error message since factorial is not defined for negative numbers.\n- If `n` is 0 or 1, it returns 1, as the factorial of 0 and 1 is 1.\n- For other positive integers, it calculates the factorial iteratively using a loop.\n\nThis implementation is efficient and avoids recursion, which can lead to stack overflow for large inputs.",
+      "judge": {
+        "solution_1_score": 9.5,
+        "solution_2_score": 7.5,
+        "solution_1_feedback": "Solution 1 provides a clean, well‑documented implementation of both recursive and iterative factorials, uses BigInt to handle arbitrarily large results, validates input, and explains trade‑offs. The code is correct, handles edge cases (negative or non‑integer input) and includes usage examples. Minor quibble: the recursive version still relies on Number for the decrement loop, but this does not affect correctness for typical inputs. Overall a high‑quality, complete answer.",
+        "solution_2_feedback": "Solution 2 implements a straightforward iterative factorial using Number. It correctly handles the base cases and negative inputs, but returns a string for errors (mixing return types) and cannot compute factorials beyond the safe integer range. The explanation is clear, but the solution is less robust and less comprehensive than Solution 1."
+      },
+      "problem": "write a factorial function in js"
+    }
+  ]
+}

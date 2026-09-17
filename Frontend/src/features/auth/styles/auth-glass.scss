@@ -1,0 +1,538 @@
+// Shared glassmorphism SCSS for login and register pages
+// Botanical Glass // Login — adapted from Stitch design to Obsidian Synthetics palette
+
+// ─── Keyframe Animations ───────────────────────────────────────────────────
+@keyframes orb-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(30px, -20px) scale(1.05); }
+  66%  { transform: translate(-15px, 25px) scale(0.97); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes orb-drift-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  40%  { transform: translate(-25px, 15px) scale(1.04); }
+  70%  { transform: translate(20px, -30px) scale(0.98); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes shimmer-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes panel-slide-in {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.6); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 5px rgba(88, 166, 255, 0); }
+}
+
+@keyframes shimmer-sweep {
+  0%   { left: -60%; }
+  100% { left: 130%; }
+}
+
+// ─── Auth Page Shell ────────────────────────────────────────────────────────
+.auth-page {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #090a0f url('/2.png') no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: 'Inter', system-ui, sans-serif;
+
+  // ── Ambient Orbs (subtle accent lights over wallpaper) ──
+  .auth-orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+    opacity: 0.6;
+
+    &--blue {
+      top: -12rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 56rem;
+      height: 56rem;
+      background: radial-gradient(circle, rgba(88, 166, 255, 0.06) 0%, transparent 65%);
+      animation: orb-drift 18s ease-in-out infinite;
+    }
+
+    &--purple {
+      bottom: -16rem;
+      right: -8rem;
+      width: 50rem;
+      height: 50rem;
+      background: radial-gradient(circle, rgba(188, 140, 255, 0.05) 0%, transparent 65%);
+      animation: orb-drift-2 22s ease-in-out infinite;
+    }
+
+    &--amber {
+      top: 40%;
+      left: -10rem;
+      width: 36rem;
+      height: 36rem;
+      background: radial-gradient(circle, rgba(240, 136, 62, 0.03) 0%, transparent 65%);
+      animation: orb-drift 28s ease-in-out infinite reverse;
+    }
+  }
+
+  // ── Noise texture overlay ──
+  &::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    opacity: 0.3;
+  }
+
+  // ── Left hero panel ──
+  .auth-hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3rem 4rem 6.5rem;
+    position: relative;
+    z-index: 2;
+
+    @media (max-width: 1023px) { display: none; }
+
+    .auth-hero__wordmark {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      width: 100%;
+      margin-bottom: auto;
+      padding-top: 0.5rem;
+
+      .wordmark-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #58a6ff;
+        animation: pulse-dot 2.4s ease-in-out infinite;
+        box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
+      }
+
+      span {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(88, 166, 255, 0.65);
+      }
+    }
+
+    .wallpaper-switcher {
+      margin-left: auto;
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(12, 16, 24, 0.32);
+      color: rgba(224, 230, 240, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 999px;
+      padding: 0.38rem 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        border-color: rgba(88, 166, 255, 0.32);
+        background: rgba(88, 166, 255, 0.08);
+      }
+    }
+
+    .auth-hero__quote {
+      max-width: 360px;
+      position: relative;
+      z-index: 2;
+      margin-top: auto;
+      margin-bottom: -1.8rem;
+      padding-bottom: 0.25rem;
+      animation: shimmer-in 0.8s ease both;
+
+      blockquote {
+        font-size: 1.35rem;
+        font-weight: 300;
+        line-height: 1.65;
+        color: rgba(224, 234, 255, 0.65);
+        font-style: italic;
+        margin: 0 0 0.5rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      cite {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: rgba(88, 166, 255, 0.55);
+        font-style: normal;
+      }
+    }
+  }
+
+  // ── Right frosted panel ──
+  .auth-panel {
+    position: relative;
+    z-index: 2;
+    width: 520px;
+    flex-shrink: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3.5rem;
+
+    // Glassmorphism with frosted blur over background
+    background: rgba(12, 16, 24, 0.58);
+    backdrop-filter: blur(36px) saturate(160%);
+    -webkit-backdrop-filter: blur(36px) saturate(160%);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      -24px 0 80px -20px rgba(0, 0, 0, 0.8),
+      inset 1px 0 0 rgba(255, 255, 255, 0.08);
+
+    animation: panel-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+    @media (max-width: 1023px) {
+      width: 100%;
+      border-left: none;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 32px 80px -16px rgba(0, 0, 0, 0.8);
+      padding: 3rem 2rem;
+      margin: auto;
+      min-height: 100vh;
+    }
+
+    // Inner scroll container
+    .auth-panel__inner {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      animation: shimmer-in 0.6s 0.1s ease both;
+    }
+
+    // ── Header ──
+    .auth-header {
+      text-align: center;
+
+      .auth-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(88, 166, 255, 0.08);
+        border: 1px solid rgba(88, 166, 255, 0.2);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: #58a6ff;
+        margin-bottom: 1rem;
+
+        .badge-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: #58a6ff;
+          animation: pulse-dot 2s infinite;
+        }
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: #e6edf3;
+        margin: 0 0 0.4rem;
+        line-height: 1.2;
+      }
+
+      p {
+        font-size: 0.88rem;
+        color: rgba(139, 148, 158, 0.9);
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+
+    // ── Form fields ──
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+
+    .glass-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+
+      label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: rgba(224, 230, 240, 0.8);
+        letter-spacing: 0.01em;
+      }
+
+      .field-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.75rem 0;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 0;
+        color: #e6edf3;
+        font-size: 0.9rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.22s ease, color 0.22s ease;
+        padding-right: 2rem;
+
+        &::placeholder {
+          color: rgba(139, 148, 158, 0.5);
+          font-weight: 300;
+          letter-spacing: 0.02em;
+        }
+
+        &:focus {
+          border-bottom-color: rgba(255, 255, 255, 0.8);
+        }
+
+        &:hover:not(:focus) {
+          border-bottom-color: rgba(255, 255, 255, 0.35);
+        }
+      }
+
+      .field-icon {
+        position: absolute;
+        right: 0;
+        bottom: 0.75rem;
+        color: rgba(139, 148, 158, 0.6);
+        pointer-events: none;
+        width: 16px;
+        height: 16px;
+
+        &--btn {
+          pointer-events: all;
+          cursor: pointer;
+          background: none;
+          border: none;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.18s ease;
+
+          &:hover { color: #e6edf3; }
+        }
+      }
+    }
+
+    // ── Divider ──
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      &::before, &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      span {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(72, 79, 88, 1);
+      }
+    }
+
+    // ── Google OAuth button ──
+    .btn-google {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      color: rgba(224, 230, 240, 0.92);
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(255, 255, 255, 0.22);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transform: translateY(-1px);
+      }
+
+      &:active { transform: translateY(0) scale(0.99); }
+
+      .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    }
+
+    // ── Primary submit button ──
+    .btn-submit {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      padding: 0.82rem 1.5rem;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #58a6ff 0%, #bc8cff 100%);
+      border: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.22s ease, opacity 0.18s ease;
+      box-shadow: 0 8px 24px rgba(88, 166, 255, 0.25);
+      letter-spacing: 0.01em;
+      margin-top: 0.5rem;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -60%;
+        width: 30%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+        transform: skewX(-20deg);
+        transition: left 0.7s ease;
+        pointer-events: none;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 32px rgba(88, 166, 255, 0.38);
+
+        &::after { left: 130%; }
+      }
+
+      &:active { transform: translateY(0) scale(0.99); }
+    }
+
+    // ── Auth error ──
+    .auth-error {
+      font-size: 0.78rem;
+      color: #f85149;
+      text-align: center;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      background: rgba(248, 81, 73, 0.08);
+      border: 1px solid rgba(248, 81, 73, 0.2);
+      margin-top: -0.5rem;
+    }
+
+    // ── Footer link ──
+    .auth-footer-link {
+      text-align: center;
+      font-size: 0.82rem;
+      color: rgba(139, 148, 158, 0.8);
+
+      a {
+        color: #58a6ff;
+        text-decoration: none;
+        font-weight: 500;
+        margin-left: 0.25rem;
+        transition: color 0.18s ease;
+
+        &:hover { color: #a2c9ff; text-decoration: underline; }
+      }
+    }
+  }
+}
+
+// ─── GitHub Footer Button (bottom-left, fixed) ─────────────────────────────
+.auth-github-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.75rem;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.52rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 24px rgba(8, 10, 18, 0.4),
+    0 0 20px rgba(88, 166, 255, 0.06);
+  color: rgba(224, 230, 240, 0.88);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
+  animation: shimmer-in 0.6s 0.4s ease both;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 12px 28px rgba(8, 10, 18, 0.5),
+      0 0 24px rgba(88, 166, 255, 0.12);
+    transform: translateY(-2px);
+  }
+
+  &:active { transform: translateY(0); }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    padding: 0.14rem;
+    color: #090a0f;
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
