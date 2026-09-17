@@ -1,4 +1,5 @@
 # **InferTrials**
+<img src="Frontend/public/logo_reverse.jpeg" alt="InferTrials logo" />
 
 **InferTrials** is a full-stack AI coding challenge arena. Users submit a programming problem, the backend sends it through a LangGraph-powered dual-model workflow, two independent solutions are generated, and an automated judge scores and explains the result.
 
@@ -186,8 +187,21 @@ langgraph-ai-arena/
 |   |-- public/
 |   |   |-- ai-arena-logo.svg
 |   |   |-- google-g-logo-white.svg
+|   |   |-- javascript-factorial.json
 |   |   |-- logo.jpeg
-|   |   `-- logo_reverse.jpeg
+|   |   |-- logo_reverse.jpeg
+|   |   |-- screenshots/
+|   |   |   |-- dashboard.png
+|   |   |   |-- login.png
+|   |   |   `-- register.png
+|   |   |-- vite.svg
+|   |   `-- wallpapers/
+|   |       |-- 1.png
+|   |       |-- 2.png
+|   |       |-- 3.png
+|   |       |-- 4.jpg
+|   |       |-- 5.png
+|   |       `-- 6.webp
 |   `-- src/
 |       |-- main.jsx
 |       |-- index.css
@@ -210,10 +224,22 @@ langgraph-ai-arena/
 |               |-- auth.context.jsx
 |               |-- auth.provider.jsx
 |               |-- components/
+|               |   |-- FormGroup.jsx
+|               |   |-- Navbar.jsx
+|               |   `-- Protected.jsx
 |               |-- hooks/
+|               |   `-- useAuth.js
 |               |-- pages/
+|               |   |-- Login.jsx
+|               |   `-- Register.jsx
 |               |-- services/
+|               |   `-- auth.api.js
 |               `-- styles/
+|                   |-- auth-glass.scss
+|                   |-- login.scss
+|                   `-- register.scss
+|-- docs/
+|   `-- application-flow.mmd
 `-- README.md
 ```
 
