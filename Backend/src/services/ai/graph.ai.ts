@@ -1,8 +1,8 @@
-import { StateGraph, type GraphNode, StateSchema, START, END, type CompiledStateGraph  } from "@langchain/langgraph";
+import { StateGraph, type GraphNode, StateSchema, START, END } from "@langchain/langgraph";
 import z from "zod";
-import { cohereModel, groqModel } from "./model.ai.js";
+import { cohereModel, geminiModel, groqModel } from "./model.ai.js";
 import { createAgent, HumanMessage, providerStrategy, SystemMessage, tool } from "langchain";
-import { searchInternet } from "../services/internet.service.js";
+import { searchInternet } from "../internet.service.js";
 
 const searchInternetTool = tool(searchInternet, {
   name: "searchInternet",
@@ -41,7 +41,7 @@ const judgeNode: GraphNode<typeof state> = async (state) => {
   const { problem, solution_1, solution_2 } = state
 
   const judge = createAgent({
-    model: groqModel,
+    model: geminiModel,
     responseFormat: providerStrategy(z.object({
       solution_1_score: z.number().min(0).max(10),
       solution_2_score: z.number().min(0).max(10),

@@ -1,32 +1,37 @@
-import { useRef, useEffect } from 'react'
-import UserMessage from './UserMessage'
-import ArenaResponse from './ArenaResponse'
-import LoadingResponse from './LoadingResponse'
-import ChatInput from './ChatInput'
+import { useRef, useEffect } from "react";
+import UserMessage from "./UserMessage";
+import ArenaResponse from "./ArenaResponse";
+import LoadingResponse from "./LoadingResponse";
+import ChatInput from "./ChatInput";
 
-export default function ChatArea({ chat, isLoading, inputText, onInputChange, onSend, onExport }) {
-  const messagesEndRef = useRef(null)
+export default function ChatArea({
+  chat,
+  isLoading,
+  inputText,
+  onInputChange,
+  onSend,
+  onExport,
+}) {
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [chat?.messages, isLoading])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat?.messages, isLoading]);
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      onSend()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      onSend();
     }
-  }
+  };
 
   return (
     <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0e14]">
-
       {/* ── Header ── */}
       <header className="flex items-center justify-between px-6 h-14 min-h-14 bg-[rgba(22,27,34,0.85)] backdrop-blur-md border-b border-line gap-3 shrink-0">
-
         {/* Left: title + subtitle */}
         <div className="flex flex-col gap-0.5 min-w-0">
           <span className="text-[0.9rem] font-semibold text-fg max-w-65 overflow-hidden text-ellipsis whitespace-nowrap">
-            {chat?.title || 'InferTrials'}
+            {chat?.title || "InferTrials"}
           </span>
           <div className="font-mono text-[0.62rem] text-fg-dim tracking-[0.04em]">
             Dual-Solution Code Analysis Engine
@@ -35,7 +40,6 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
 
         {/* Centre: Live Benchmark + Model VS Model */}
         <div className="flex items-center gap-2 flex-1 justify-center">
-
           {/* Live Benchmark pill */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[rgba(63,185,80,0.08)] border border-[rgba(63,185,80,0.25)] shrink-0">
             {/* Outer ring pulses; inner dot stays solid */}
@@ -59,7 +63,12 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
           {/* VS separator */}
           <span
             className="font-mono text-[0.65rem] font-bold tracking-widest uppercase select-none"
-            style={{ color: 'transparent', backgroundImage: 'linear-gradient(135deg,#58a6ff,#bc8cff)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}
+            style={{
+              color: "transparent",
+              backgroundImage: "linear-gradient(135deg,#58a6ff,#bc8cff)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+            }}
           >
             vs
           </span>
@@ -100,20 +109,25 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
             />
             <h2
               className="text-2xl font-bold mb-2 bg-clip-text text-transparent"
-              style={{ backgroundImage: 'linear-gradient(135deg, #58a6ff, #bc8cff)' }}
+              style={{
+                backgroundImage: "linear-gradient(135deg, #58a6ff, #bc8cff)",
+              }}
             >
               Start an Arena Match
             </h2>
             <p className="text-[0.9rem] text-fg-muted max-w-sm leading-relaxed">
-              Submit a coding challenge and get two AI solutions with judge analysis.
+              Submit a coding challenge and get two AI solutions with judge
+              analysis.
             </p>
           </div>
         )}
 
         {chat?.messages?.map((msg) =>
-          msg.type === 'user'
-            ? <UserMessage key={msg.id} message={msg} />
-            : <ArenaResponse key={msg.id} message={msg} />
+          msg.type === "user" ? (
+            <UserMessage key={msg.id} message={msg} />
+          ) : (
+            <ArenaResponse key={msg.id} message={msg} />
+          ),
         )}
 
         {isLoading && <LoadingResponse />}
@@ -130,5 +144,5 @@ export default function ChatArea({ chat, isLoading, inputText, onInputChange, on
         disabled={isLoading}
       />
     </main>
-  )
+  );
 }

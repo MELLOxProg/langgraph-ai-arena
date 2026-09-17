@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import Sidebar from './components/Sidebar'
-import ChatArea from './components/ChatArea'
-import { ToastProvider } from './components/Toast'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import MainLayout from './layouts/MainLayout'
 import Login from '../features/auth/pages/Login'
 import Register from '../features/auth/pages/Register'
 import Protected from '../features/auth/components/Protected'
@@ -124,6 +122,23 @@ function App() {
     setChats((current) => current.map((chat) => chat.id === id ? { ...chat, messages } : chat))
   }
 
+  async function handleDeleteChat(chatId) {
+    if (!chatId) return
+
+    try {
+      await axios.delete(`${API_BASE_URL}/api/chats/${chatId}`, { withCredentials: true })
+
+      const remainingChats = chats.filter((chat) => chat.id !== chatId)
+      setChats(remainingChats)
+
+      if (activeChatId === chatId) {
+        setActiveChatId(remainingChats[0]?.id || null)
+      }
+    } catch (error) {
+      console.error('Failed to delete chat:', error)
+    }
+  }
+
   async function logoutAndRedirect() {
     try {
       await handleLogout()
@@ -152,7 +167,7 @@ function App() {
     URL.revokeObjectURL(url)
   }
 
-  return <Routes><Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} /><Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} /><Route path="/" element={<Protected><ToastProvider><div className="flex h-screen w-screen overflow-hidden bg-canvas"><Sidebar chats={chats} activeChatId={activeChatId} onSelectChat={selectChat} onNewChat={handleNewChat} onLogout={logoutAndRedirect} username={user?.username} /><ChatArea chat={activeChat} isLoading={isLoading} inputText={inputText} onInputChange={setInputText} onSend={handleSend} onExport={exportActiveChat} /></div></ToastProvider></Protected>} /></Routes>
+  return <Routes><Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} /><Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} /><Route path="/" element={<Protected><MainLayout chats={chats} activeChatId={activeChatId} inputText={inputText} isLoading={isLoading} activeChat={activeChat} user={user} onSelectChat={selectChat} onNewChat={handleNewChat} onDeleteChat={handleDeleteChat} onInputChange={setInputText} onSend={handleSend} onExport={exportActiveChat} onLogout={logoutAndRedirect} /></Protected>} /></Routes>
 }
 
 export default App

@@ -1,0 +1,6 @@
+export { default as Login } from './pages/Login'
+export { default as Register } from './pages/Register'
+export { default as Protected } from './components/Protected'
+export { default as Navbar } from './components/Navbar'
+export { useAuth } from './hooks/useAuth'
+export { AuthProvider } from './auth.provider'

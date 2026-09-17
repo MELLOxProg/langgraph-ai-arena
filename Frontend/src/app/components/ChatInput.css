@@ -17,7 +17,9 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .chat-input-wrapper:focus-within {
@@ -90,10 +92,10 @@
 }
 
 .btn-send::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.2s;
 }

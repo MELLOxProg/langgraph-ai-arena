@@ -10,10 +10,20 @@ router.post("/register", authController.register);
 router.post("/login", authController.login);
 router.get("/get-me", authUser, authController.getMe);
 router.get("/logout", authController.logout);
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-router.get("/google/callback", passport.authenticate("google", { session: false, failureRedirect: `${config.CLIENT_URL}/login` }), (req, res) => {
-  setAuthCookie(res, req.user!);
-  res.redirect(config.CLIENT_URL);
-});
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${config.CLIENT_URL}/login`,
+  }),
+  (req, res) => {
+    setAuthCookie(res, req.user!);
+    res.redirect(config.CLIENT_URL);
+  },
+);
 
 export default router;

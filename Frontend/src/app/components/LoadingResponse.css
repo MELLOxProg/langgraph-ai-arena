@@ -33,7 +33,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-title {
@@ -73,9 +75,15 @@
   flex-shrink: 0;
 }
 
-.sol-1-label { color: var(--amber); }
-.sol-2-label { color: var(--green); }
-.judge-label { color: var(--purple); }
+.sol-1-label {
+  color: var(--amber);
+}
+.sol-2-label {
+  color: var(--green);
+}
+.judge-label {
+  color: var(--purple);
+}
 
 .loading-track {
   flex: 1;
@@ -91,12 +99,30 @@
   animation: loadingBar 1.5s ease-in-out infinite;
 }
 
-.loading-fill-amber { background: var(--amber); animation-delay: 0s; }
-.loading-fill-green { background: var(--green); animation-delay: 0.2s; }
-.loading-fill-purple { background: var(--purple); animation-delay: 0.4s; }
+.loading-fill-amber {
+  background: var(--amber);
+  animation-delay: 0s;
+}
+.loading-fill-green {
+  background: var(--green);
+  animation-delay: 0.2s;
+}
+.loading-fill-purple {
+  background: var(--purple);
+  animation-delay: 0.4s;
+}
 
 @keyframes loadingBar {
-  0%   { width: 0%;   margin-left: 0%; }
-  50%  { width: 75%;  margin-left: 0%; }
-  100% { width: 0%;   margin-left: 100%; }
+  0% {
+    width: 0%;
+    margin-left: 0%;
+  }
+  50% {
+    width: 75%;
+    margin-left: 0%;
+  }
+  100% {
+    width: 0%;
+    margin-left: 100%;
+  }
 }

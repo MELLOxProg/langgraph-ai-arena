@@ -118,7 +118,9 @@
   letter-spacing: 0.03em;
 }
 
-.md-tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.md-tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
 
 .md-td {
   padding: 7px 12px;
@@ -144,7 +146,7 @@
 }
 
 .md-li::before {
-  content: '›';
+  content: "›";
   position: absolute;
   left: -0.9rem;
   color: var(--blue);

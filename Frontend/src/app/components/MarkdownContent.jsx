@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import hljs from 'highlight.js'
-import { useToast } from './useToast'
+import { useState } from "react";
+import hljs from "highlight.js";
+import { useToast } from "./useToast";
 
 /**
  * Lightweight markdown renderer with highlight.js syntax highlighting.
@@ -9,48 +9,50 @@ import { useToast } from './useToast'
  * Handles: ## headings, **bold**, `inline code`, ```code blocks```, | tables |, - lists
  */
 export default function MarkdownContent({ content }) {
-  if (!content) return null
-  const blocks = parseMarkdown(content)
+  if (!content) return null;
+  const blocks = parseMarkdown(content);
   return (
     <div className="md-content">
       {blocks.map((block, i) => renderBlock(block, i))}
     </div>
-  )
+  );
 }
 
 /** Copy-button code block — needs hooks so it lives as its own component */
 function CodeBlock({ lang, text }) {
-  const addToast = useToast()
-  const [copied, setCopied] = useState(false)
+  const addToast = useToast();
+  const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text).then(() => {
-      setCopied(true)
-      addToast('Code copied to clipboard')
-      setTimeout(() => setCopied(false), 2000)
-    })
-  }
+      setCopied(true);
+      addToast("Code copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
-  let highlightedHtml
-  const normalizedLang = lang?.toLowerCase().trim()
+  let highlightedHtml;
+  const normalizedLang = lang?.toLowerCase().trim();
   try {
     if (normalizedLang && hljs.getLanguage(normalizedLang)) {
-      highlightedHtml = hljs.highlight(text, { language: normalizedLang }).value
+      highlightedHtml = hljs.highlight(text, {
+        language: normalizedLang,
+      }).value;
     } else {
-      highlightedHtml = hljs.highlightAuto(text).value
+      highlightedHtml = hljs.highlightAuto(text).value;
     }
   } catch {
     highlightedHtml = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   return (
     <div className="md-code-block">
       {/* Header row: language label + copy button */}
       <div className="md-code-lang flex items-center justify-between">
-        <span>{lang || 'code'}</span>
+        <span>{lang || "code"}</span>
         <button
           onClick={handleCopy}
           title="Copy code"
@@ -66,13 +68,24 @@ function CodeBlock({ lang, text }) {
           {copied ? (
             <>
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke="#3fb950" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M2 6l3 3 5-5"
+                  stroke="#3fb950"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              <span style={{ color: '#3fb950' }}>Copied!</span>
+              <span style={{ color: "#3fb950" }}>Copied!</span>
             </>
           ) : (
             <>
-              <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z" />
                 <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z" />
               </svg>
@@ -85,164 +98,230 @@ function CodeBlock({ lang, text }) {
         <code dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
       </pre>
     </div>
-  )
+  );
 }
 
 function renderBlock(block, i) {
   switch (block.type) {
-    case 'h1': return <h1 key={i} className="md-h1">{inlineRender(block.text)}</h1>
-    case 'h2': return <h2 key={i} className="md-h2">{inlineRender(block.text)}</h2>
-    case 'h3': return <h3 key={i} className="md-h3">{inlineRender(block.text)}</h3>
-    case 'hr': return <hr key={i} className="md-hr" />
+    case "h1":
+      return (
+        <h1 key={i} className="md-h1">
+          {inlineRender(block.text)}
+        </h1>
+      );
+    case "h2":
+      return (
+        <h2 key={i} className="md-h2">
+          {inlineRender(block.text)}
+        </h2>
+      );
+    case "h3":
+      return (
+        <h3 key={i} className="md-h3">
+          {inlineRender(block.text)}
+        </h3>
+      );
+    case "hr":
+      return <hr key={i} className="md-hr" />;
 
-    case 'code': return <CodeBlock key={i} lang={block.lang} text={block.text} />
+    case "code":
+      return <CodeBlock key={i} lang={block.lang} text={block.text} />;
 
+    case "table":
+      return (
+        <div key={i} className="md-table-wrapper">
+          <table className="md-table">
+            {block.header && (
+              <thead>
+                <tr>
+                  {block.header.map((cell, j) => (
+                    <th key={j} className="md-th">
+                      {inlineRender(cell)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+            )}
+            <tbody>
+              {block.rows.map((row, j) => (
+                <tr key={j} className="md-tr">
+                  {row.map((cell, k) => (
+                    <td key={k} className="md-td">
+                      {inlineRender(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
 
-    case 'table': return (
-      <div key={i} className="md-table-wrapper">
-        <table className="md-table">
-          {block.header && (
-            <thead>
-              <tr>
-                {block.header.map((cell, j) => (
-                  <th key={j} className="md-th">{inlineRender(cell)}</th>
-                ))}
-              </tr>
-            </thead>
-          )}
-          <tbody>
-            {block.rows.map((row, j) => (
-              <tr key={j} className="md-tr">
-                {row.map((cell, k) => (
-                  <td key={k} className="md-td">{inlineRender(cell)}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    )
+    case "ul":
+      return (
+        <ul key={i} className="md-ul">
+          {block.items.map((item, j) => (
+            <li key={j} className="md-li">
+              {inlineRender(item)}
+            </li>
+          ))}
+        </ul>
+      );
 
-    case 'ul': return (
-      <ul key={i} className="md-ul">
-        {block.items.map((item, j) => (
-          <li key={j} className="md-li">{inlineRender(item)}</li>
-        ))}
-      </ul>
-    )
+    case "p":
+      return (
+        <p key={i} className="md-p">
+          {inlineRender(block.text)}
+        </p>
+      );
 
-    case 'p': return <p key={i} className="md-p">{inlineRender(block.text)}</p>
-
-    default: return null
+    default:
+      return null;
   }
 }
 
 /** Render inline markdown: **bold**, `code`, plain text */
 function inlineRender(text) {
-  if (!text) return null
-  const parts = []
-  let remaining = text
-  let key = 0
+  if (!text) return null;
+  const parts = [];
+  let remaining = text;
+  let key = 0;
   while (remaining.length > 0) {
-    const boldMatch = remaining.match(/\*\*(.+?)\*\*/)
-    const codeMatch = remaining.match(/`([^`]+)`/)
-    const boldIdx = boldMatch ? remaining.indexOf(boldMatch[0]) : Infinity
-    const codeIdx = codeMatch ? remaining.indexOf(codeMatch[0]) : Infinity
+    const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
+    const codeMatch = remaining.match(/`([^`]+)`/);
+    const boldIdx = boldMatch ? remaining.indexOf(boldMatch[0]) : Infinity;
+    const codeIdx = codeMatch ? remaining.indexOf(codeMatch[0]) : Infinity;
 
     if (boldMatch && boldIdx <= codeIdx) {
-      if (boldIdx > 0) parts.push(<span key={key++}>{remaining.slice(0, boldIdx)}</span>)
-      parts.push(<strong key={key++} className="md-bold">{boldMatch[1]}</strong>)
-      remaining = remaining.slice(boldIdx + boldMatch[0].length)
+      if (boldIdx > 0)
+        parts.push(<span key={key++}>{remaining.slice(0, boldIdx)}</span>);
+      parts.push(
+        <strong key={key++} className="md-bold">
+          {boldMatch[1]}
+        </strong>,
+      );
+      remaining = remaining.slice(boldIdx + boldMatch[0].length);
     } else if (codeMatch && codeIdx < Infinity) {
-      if (codeIdx > 0) parts.push(<span key={key++}>{remaining.slice(0, codeIdx)}</span>)
-      parts.push(<code key={key++} className="md-inline-code">{codeMatch[1]}</code>)
-      remaining = remaining.slice(codeIdx + codeMatch[0].length)
+      if (codeIdx > 0)
+        parts.push(<span key={key++}>{remaining.slice(0, codeIdx)}</span>);
+      parts.push(
+        <code key={key++} className="md-inline-code">
+          {codeMatch[1]}
+        </code>,
+      );
+      remaining = remaining.slice(codeIdx + codeMatch[0].length);
     } else {
-      parts.push(<span key={key++}>{remaining}</span>)
-      break
+      parts.push(<span key={key++}>{remaining}</span>);
+      break;
     }
   }
-  return parts
+  return parts;
 }
 
 /** Parse raw markdown string into block objects */
 function parseMarkdown(md) {
-  const lines = md.split('\n')
-  const blocks = []
-  let i = 0
+  const lines = md.split("\n");
+  const blocks = [];
+  let i = 0;
 
   while (i < lines.length) {
-    const line = lines[i]
+    const line = lines[i];
 
     // Fenced code block
-    if (line.startsWith('```')) {
-      const lang = line.slice(3).trim()
-      i++
-      const codeLines = []
-      while (i < lines.length && !lines[i].startsWith('```')) {
-        codeLines.push(lines[i])
-        i++
+    if (line.startsWith("```")) {
+      const lang = line.slice(3).trim();
+      i++;
+      const codeLines = [];
+      while (i < lines.length && !lines[i].startsWith("```")) {
+        codeLines.push(lines[i]);
+        i++;
       }
-      i++ // skip closing ```
-      blocks.push({ type: 'code', lang, text: codeLines.join('\n') })
-      continue
+      i++; // skip closing ```
+      blocks.push({ type: "code", lang, text: codeLines.join("\n") });
+      continue;
     }
 
     // Horizontal rule
-    if (/^---+$/.test(line.trim())) { blocks.push({ type: 'hr' }); i++; continue }
+    if (/^---+$/.test(line.trim())) {
+      blocks.push({ type: "hr" });
+      i++;
+      continue;
+    }
 
     // Headings
-    if (line.startsWith('### ')) { blocks.push({ type: 'h3', text: line.slice(4) }); i++; continue }
-    if (line.startsWith('## '))  { blocks.push({ type: 'h2', text: line.slice(3) }); i++; continue }
-    if (line.startsWith('# '))   { blocks.push({ type: 'h1', text: line.slice(2) }); i++; continue }
+    if (line.startsWith("### ")) {
+      blocks.push({ type: "h3", text: line.slice(4) });
+      i++;
+      continue;
+    }
+    if (line.startsWith("## ")) {
+      blocks.push({ type: "h2", text: line.slice(3) });
+      i++;
+      continue;
+    }
+    if (line.startsWith("# ")) {
+      blocks.push({ type: "h1", text: line.slice(2) });
+      i++;
+      continue;
+    }
 
     // Table
-    if (line.startsWith('|')) {
-      const rows = []
-      let header = null
-      while (i < lines.length && lines[i].startsWith('|')) {
-        const cells = lines[i].split('|').slice(1, -1).map((c) => c.trim())
-        if (lines[i].includes('---')) { /* separator row */ }
-        else if (!header) { header = cells }
-        else { rows.push(cells) }
-        i++
+    if (line.startsWith("|")) {
+      const rows = [];
+      let header = null;
+      while (i < lines.length && lines[i].startsWith("|")) {
+        const cells = lines[i]
+          .split("|")
+          .slice(1, -1)
+          .map((c) => c.trim());
+        if (lines[i].includes("---")) {
+          /* separator row */
+        } else if (!header) {
+          header = cells;
+        } else {
+          rows.push(cells);
+        }
+        i++;
       }
-      blocks.push({ type: 'table', header, rows })
-      continue
+      blocks.push({ type: "table", header, rows });
+      continue;
     }
 
     // Unordered list
     if (/^[-*] /.test(line)) {
-      const items = []
+      const items = [];
       while (i < lines.length && /^[-*] /.test(lines[i])) {
-        items.push(lines[i].replace(/^[-*] /, ''))
-        i++
+        items.push(lines[i].replace(/^[-*] /, ""));
+        i++;
       }
-      blocks.push({ type: 'ul', items })
-      continue
+      blocks.push({ type: "ul", items });
+      continue;
     }
 
     // Blank line
-    if (line.trim() === '') { i++; continue }
+    if (line.trim() === "") {
+      i++;
+      continue;
+    }
 
     // Paragraph
-    const paragraphLines = []
+    const paragraphLines = [];
     while (
       i < lines.length &&
-      lines[i].trim() !== '' &&
-      !lines[i].startsWith('#') &&
-      !lines[i].startsWith('```') &&
-      !lines[i].startsWith('|') &&
+      lines[i].trim() !== "" &&
+      !lines[i].startsWith("#") &&
+      !lines[i].startsWith("```") &&
+      !lines[i].startsWith("|") &&
       !/^[-*] /.test(lines[i]) &&
       !/^---+$/.test(lines[i].trim())
     ) {
-      paragraphLines.push(lines[i])
-      i++
+      paragraphLines.push(lines[i]);
+      i++;
     }
     if (paragraphLines.length > 0) {
-      blocks.push({ type: 'p', text: paragraphLines.join(' ') })
+      blocks.push({ type: "p", text: paragraphLines.join(" ") });
     }
   }
 
-  return blocks
+  return blocks;
 }
