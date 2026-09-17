@@ -1,0 +1,94 @@
+flowchart TD
+
+subgraph group_client["React dashboard"]
+  node_client_entry["Vite client entry<br/>React entry<br/>[main.jsx]"]
+  node_client_shell["App shell &amp; routing<br/>React application<br/>[App.jsx]"]
+  node_workspace["Chat workspace<br/>dashboard layout<br/>[MainLayout.jsx]"]
+  node_chat_ui["Chat and arena results<br/>React components<br/>[ArenaResponse.jsx]"]
+  node_auth_client["Client auth guard<br/>auth state<br/>[auth.provider.jsx]"]
+  node_auth_api_client["Cookie API client<br/>frontend API<br/>[auth.api.js]"]
+end
+
+subgraph group_api["Express API"]
+  node_server["Node API entry<br/>Express runtime<br/>[server.ts]"]
+  node_app["API composition<br/>Express app<br/>[app.ts]"]
+  node_auth_routes["Authentication API<br/>routes &amp; controller<br/>[auth.routes.ts]"]
+  node_auth_service["Token &amp; password service<br/>auth service<br/>[auth.service.ts]"]
+  node_auth_middleware["Session enforcement<br/>JWT middleware<br/>[auth.middleware.ts]"]
+  node_chat_api["Chat API<br/>routes &amp; controller<br/>[chat.controller.ts]"]
+  node_title_service["Title generator<br/>chat service<br/>[title.service.ts]"]
+end
+
+subgraph group_arena["AI arena"]
+  node_arena_graph{{"Arena workflow<br/>LangGraph workflow<br/>[graph.ai.ts]"}}
+  node_model_factory["Model provider factory<br/>AI provider config<br/>[model.ai.ts]"]
+  node_solution_models["Independent solutions<br/>Groq + Cohere"]
+  node_gemini_judge["Gemini judge<br/>scoring model"]
+end
+
+subgraph group_data["State &amp; external systems"]
+  node_chat_store[("Users, chats &amp; messages<br/>Mongoose models<br/>[message.model.ts]")]
+  node_mongo[("MongoDB<br/>database<br/>[database.ts]")]
+  node_redis[("Redis blacklist<br/>cache<br/>[cache.ts]")]
+  node_google_oauth["Google OAuth<br/>optional identity provider<br/>[passport.ts]"]
+  node_tavily["Tavily context<br/>optional web context"]
+end
+
+node_client_entry -->|"boots"| node_client_shell
+node_client_shell -->|"guards routes"| node_auth_client
+node_client_shell -->|"renders"| node_workspace
+node_workspace -->|"shows active results"| node_chat_ui
+node_auth_client -->|"uses"| node_auth_api_client
+node_workspace -->|"submits cookie requests"| node_auth_api_client
+node_auth_api_client -->|"HTTPS with cookies"| node_server
+node_server -->|"starts"| node_app
+node_app -->|"mounts"| node_auth_routes
+node_app -->|"mounts"| node_chat_api
+node_auth_routes -->|"issues credentials"| node_auth_service
+node_auth_routes -.->|"OAuth strategy"| node_google_oauth
+node_auth_service -->|"records logout revocation"| node_redis
+node_chat_api -->|"protected by"| node_auth_middleware
+node_auth_middleware -->|"checks revocation"| node_redis
+node_chat_api -->|"loads and persists history"| node_chat_store
+node_chat_store -->|"Mongoose persistence"| node_mongo
+node_chat_api -->|"creates chat titles"| node_title_service
+node_chat_api -->|"invokes with context"| node_arena_graph
+node_arena_graph -->|"parallel solution stage"| node_solution_models
+node_arena_graph -->|"judge stage"| node_gemini_judge
+node_model_factory -->|"constructs providers"| node_solution_models
+node_model_factory -->|"constructs provider"| node_gemini_judge
+node_arena_graph -.->|"optional external context"| node_tavily
+node_arena_graph -->|"serialized result"| node_chat_api
+
+click node_client_entry "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Frontend/src/main.jsx"
+click node_client_shell "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Frontend/src/app/App.jsx"
+click node_workspace "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Frontend/src/app/layouts/MainLayout.jsx"
+click node_chat_ui "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Frontend/src/app/components/ArenaResponse.jsx"
+click node_auth_client "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Frontend/src/features/auth/auth.provider.jsx"
+click node_auth_api_client "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Frontend/src/features/auth/services/auth.api.js"
+click node_server "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/server.ts"
+click node_app "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/app.ts"
+click node_auth_routes "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/routes/auth.routes.ts"
+click node_auth_service "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/services/auth.service.ts"
+click node_auth_middleware "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/middlewares/auth.middleware.ts"
+click node_chat_api "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/controllers/chat.controller.ts"
+click node_chat_store "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/models/message.model.ts"
+click node_title_service "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/services/title.service.ts"
+click node_arena_graph "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/services/ai/graph.ai.ts"
+click node_model_factory "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/services/ai/model.ai.ts"
+click node_mongo "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/config/database.ts"
+click node_redis "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/config/cache.ts"
+click node_google_oauth "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/config/passport.ts"
+click node_tavily "https://github.com/melloxprog/langgraph-ai-arena/blob/main/Backend/src/services/internet.service.ts"
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_client_entry,node_client_shell,node_workspace,node_chat_ui,node_auth_client,node_auth_api_client toneBlue
+class node_server,node_app,node_auth_routes,node_auth_service,node_auth_middleware,node_chat_api,node_title_service toneAmber
+class node_arena_graph,node_model_factory,node_solution_models,node_gemini_judge toneMint
+class node_chat_store,node_mongo,node_redis,node_google_oauth,node_tavily toneRose
