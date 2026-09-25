@@ -273,7 +273,7 @@ Optional integrations:
 ### 1. Clone the repository
 
 ```bash
-git clone (https://github.com/MELLOxProg/langgraph-ai-arena)
+git clone https://github.com/MELLOxProg/langgraph-ai-arena
 cd langgraph-ai-arena
 ```
 
