@@ -10,11 +10,11 @@ The project combines a React/Vite dashboard, an Express/TypeScript API, MongoDB 
 
 ### Login Page
 
-![Login page screenshot placeholder](Frontend/public/screenshots/login.png)
+![Login page screenshot placeholder](Frontend/public/screenshots/login-v2.png)
 
 ### Register Page
 
-![Register page screenshot placeholder](Frontend/public/screenshots/register.png)
+![Register page screenshot placeholder](Frontend/public/screenshots/register-v2.png)
 
 ### Main Dashboard
 
