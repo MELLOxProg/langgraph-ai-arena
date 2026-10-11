@@ -23,3 +23,9 @@ export const groqModel = new ChatGroq({
   model: "openai/gpt-oss-120b",
   apiKey: config.GROQ_API_KEY,
 });
+
+// Used when gpt-oss-120b hits Groq's rate limit; gpt-oss-20b has its own separate limit.
+export const groqFallbackModel = new ChatGroq({
+  model: "openai/gpt-oss-20b",
+  apiKey: config.GROQ_API_KEY,
+});

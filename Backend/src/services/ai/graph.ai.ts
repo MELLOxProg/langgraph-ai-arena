@@ -1,6 +1,6 @@
 import { StateGraph, type GraphNode, StateSchema, START, END } from "@langchain/langgraph";
 import z from "zod";
-import { cohereModel, geminiModel, groqModel } from "./model.ai.js";
+import { cohereModel, geminiModel, groqFallbackModel, groqModel } from "./model.ai.js";
 import { createAgent, HumanMessage, providerStrategy, SystemMessage, tool } from "langchain";
 import { searchInternet } from "../internet.service.js";
 
@@ -26,8 +26,16 @@ const state = new StateSchema({
 const solutionNode: GraphNode<typeof state> = async (state) => {
   const context = state.context ? `\n\nPrevious conversation context:\n${state.context}` : "";
   const systemPrompt = "You are one of two competing coding assistants. Solve the latest user challenge carefully. Use the searchInternet tool when current or external information is needed. Treat previous conversation context as background and answer the latest request directly.";
+  const runSolver = (model: typeof groqModel) =>
+    createAgent({ model, tools: [searchInternetTool], systemPrompt }).invoke({ messages: [new SystemMessage(systemPrompt), new HumanMessage(`${state.problem}${context}`)] });
+  const solveWithFallback = () =>
+    runSolver(groqModel).catch((error: { status?: number }) => {
+      if (error.status !== 429) throw error;
+      console.warn("Groq rate limit reached; retrying solution 1 on the fallback model.");
+      return runSolver(groqFallbackModel);
+    });
     const [groqResponse, cohereResponse] = await Promise.all([
-    createAgent({ model: groqModel, tools: [searchInternetTool], systemPrompt }).invoke({ messages: [new SystemMessage(systemPrompt), new HumanMessage(`${state.problem}${context}`)] }),
+    solveWithFallback(),
     cohereModel.invoke(`${systemPrompt}\n\n${state.problem}${context}`),
   ]);
     return {
