@@ -3,11 +3,12 @@ import * as authController from "../controllers/auth.controller.js";
 import passport from "../config/passport.js";
 import config from "../config/config.js";
 import { authUser } from "../middlewares/auth.middleware.js";
+import { loginLimiter } from "../middlewares/rateLimit.middleware.js";
 import { setAuthCookie } from "../services/auth.service.js";
 
 const router = Router();
 router.post("/register", authController.register);
-router.post("/login", authController.login);
+router.post("/login", loginLimiter, authController.login);
 router.get("/get-me", authUser, authController.getMe);
 router.get("/logout", authController.logout);
 router.get(
