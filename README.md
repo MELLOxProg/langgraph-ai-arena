@@ -1,6 +1,12 @@
 # **InferTrials**
 <img src="Frontend/public/logo_reverse.jpeg" alt="InferTrials logo" />
 
+<p align="center">
+  <a href="https://langgraph-ai-arena.vercel.app/">
+    <img src="https://img.shields.io/badge/🚀_Live_Demo-langgraph--ai--arena.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+</p>
+
 **InferTrials** is a full-stack AI coding challenge arena. Users submit a programming problem, the backend sends it through a LangGraph-powered dual-model workflow, two independent solutions are generated, and an automated judge scores and explains the result.
 
 The project combines a React/Vite dashboard, an Express/TypeScript API, MongoDB persistence, Redis-backed token logout protection, Google OAuth, and LangChain/LangGraph model orchestration.
@@ -23,7 +29,7 @@ The project combines a React/Vite dashboard, an Express/TypeScript API, MongoDB 
 ## Features
 
 - **Secure authentication:** email/password accounts, Google OAuth, JWT cookie sessions, protected dashboard routing, and Redis-backed token blacklisting on logout.
-- **Arena-based AI workflow:** every coding prompt is evaluated through a LangGraph/LangChain pipeline that generates two independent answers, one from Groq and one from Cohere, with optional Tavily web search for current or external context.
+- **Arena-based AI workflow:** every coding prompt is evaluated through a LangGraph/LangChain pipeline that generates two independent answers, one from Groq and one from Cohere, with optional Tavily web search for current or external context. If Groq's `gpt-oss-120b` hits its rate limit, Solution 1 automatically retries on Groq's `gpt-oss-20b`.
 - **Automated judging:** a dedicated judge agent scores both solutions from 0 to 10, provides concise feedback for each answer, and highlights the winning response in the dashboard.
 - **Persistent chat workspace:** users can create new arena matches, resume saved chats, preserve conversation context across turns, delete chats, and rely on automatic AI-generated chat titles with a fallback title system.
 - **Polished developer-focused UI:** the dashboard includes loading/progress states, markdown rendering, syntax-highlighted code blocks, copy-to-clipboard support, JSON chat export, responsive styling, dedicated login/register screens, and persistent wallpaper switching for the auth pages.
@@ -58,7 +64,7 @@ end
 subgraph group_arena["AI arena"]
   node_arena_graph{{"Arena workflow<br/>LangGraph workflow<br/>[graph.ai.ts]"}}
   node_model_factory["Model provider factory<br/>AI provider config<br/>[model.ai.ts]"]
-  node_solution_models["Independent solutions<br/>Groq + Cohere"]
+  node_solution_models["Independent solutions<br/>Groq + Cohere<br/>(Groq 20b fallback on 429)"]
   node_gemini_judge["Gemini judge<br/>scoring model"]
 end
 
@@ -152,13 +158,29 @@ Use a persistent Node service rather than a short-lived serverless function: cha
 
 For split hosting, use HTTPS sibling subdomains such as `app.example.com` and `api.example.com`. They remain same-site for the existing `SameSite=Lax` cookie. If the frontend and API are on different registrable domains, use a same-origin reverse proxy instead; do not assume the current cookie will work cross-site. The frontend sends cookies with credentials, so the API must allow the exact frontend origin and credentials.
 
+### Current Deployment (Vercel + Render)
+
+The live app runs the frontend on Vercel at `https://langgraph-ai-arena.vercel.app` and the backend on Render at `https://langgraph-ai-arena-backend.onrender.com`. Because `vercel.app` and `onrender.com` are different registrable domains, `Frontend/vercel.json` uses Vercel rewrites as the same-origin reverse proxy:
+
+- `/api/*` is forwarded to the Render backend, so the browser only talks to the Vercel origin and the `SameSite=Lax` auth cookie stays first-party.
+- All other paths fall back to `index.html` for client-side routes.
+
+With this setup:
+
+- Leave `VITE_API_URL` unset on Vercel so the frontend calls relative `/api/...` URLs. Vercel settings: root directory `Frontend`, Vite preset, default build/output.
+- On Render, use root directory `Backend`, build command `npm install --include=dev && npm run build` (TypeScript and type packages are devDependencies), and start command `npm start`.
+- Set `CLIENT_URL`, `SERVER_URL`, and `FRONTEND_ORIGINS` on Render to `https://langgraph-ai-arena.vercel.app` (the Vercel origin, not the Render one), and `GOOGLE_CALLBACK_URL` to `https://langgraph-ai-arena.vercel.app/api/auth/google/callback`.
+- In Google Cloud, add `https://langgraph-ai-arena.vercel.app` as an authorized JavaScript origin and the callback URL above as an authorized redirect URI.
+- Backend-only changes only need a Render redeploy; the Vercel proxy picks them up immediately. If the Render URL changes, update the destination in `Frontend/vercel.json`.
+- Render's free tier sleeps after inactivity, so the first request after idling can take 30–60 seconds.
+
 ### Deployment Checklist
 
 **Code and build**
 
 - Build the frontend with `cd Frontend && npm ci && npm run build` and publish `Frontend/dist` as static files.
 - Build and run the backend with `cd Backend && npm ci && npm run build` and `npm start`; run it as a persistent service with the provider's assigned `PORT`.
-- Set frontend `VITE_API_URL` to the HTTPS API origin for split hosting. Leave it unset for same-origin hosting; development retains the local `:3000` fallback.
+- Set frontend `VITE_API_URL` to the HTTPS API origin for split hosting. Leave it unset for same-origin hosting or when proxying `/api` (as the current Vercel deployment does); development retains the local `:3000` fallback.
 - Keep `VITE_*` values public and never put credentials in them. Do not commit `.env` files.
 
 **Provider configuration**
@@ -217,6 +239,7 @@ langgraph-ai-arena/
 |-- Frontend/
 |   |-- index.html
 |   |-- package.json
+|   |-- vercel.json
 |   |-- vite.config.js
 |   |-- public/
 |   |   |-- ai-arena-logo.svg
@@ -429,7 +452,7 @@ http://localhost:5173
 | `GOOGLE_CALLBACK_URL` | No | Backend | Google OAuth callback URL. |
 | `GOOGLE_API_KEY` | Yes | Backend | Powers the Gemini judge model. |
 | `MISTRAL_API_KEY` | No | Backend | Configured for Mistral model usage. |
-| `VITE_API_URL` | Yes | Frontend | Public backend API URL consumed by Axios. |
+| `VITE_API_URL` | No | Frontend | Public backend API URL consumed by Axios. Leave unset in production when `/api` is proxied (as on Vercel). |
 
 ## API Reference
 
@@ -501,13 +524,16 @@ curl -i -X POST http://localhost:3000/api/chats/message \
 
 ## AI Workflow
 
-The arena graph lives in `Backend/src/services/ai/graph.ai.ts`. When a user submits a challenge, the chat controller creates or resumes the user's chat, stores the prompt, rebuilds the conversation context, and passes the latest problem into the LangGraph workflow.
+The arena graph lives in `Backend/src/services/ai/graph.ai.ts`. When a user submits a challenge, the chat controller creates or resumes the user's chat, stores the prompt, rebuilds the conversation context, and passes the latest problem into the LangGraph workflow. To stay within provider tokens-per-minute limits, the context includes only the last 4 prior messages, each truncated to 800 characters.
 
-The graph runs two stages: a solution stage and a judge stage. In the solution stage, Groq and Cohere generate independent answers in parallel, with the Groq agent able to call Tavily search when external or current context is needed. In the judge stage, Google Gemini evaluates both answers, returns structured scores and feedback, and the completed arena result is saved as an AI message before being returned to the dashboard.
+The graph runs two stages: a solution stage and a judge stage. In the solution stage, Groq and Cohere generate independent answers in parallel, with the Groq agent able to call Tavily search when external or current context is needed (search results are limited to 3 short snippets). In the judge stage, Google Gemini evaluates both answers, returns structured scores and feedback, and the completed arena result is saved as an AI message before being returned to the dashboard.
+
+If Groq's `openai/gpt-oss-120b` returns a `429` rate-limit error, Solution 1 is retried once on Groq's `openai/gpt-oss-20b`, which has its own separate rate limit. Other errors, or a failure of the fallback, Cohere, or the judge, fail the request: the API responds with `429` and a "wait a minute" message for rate limits, or `502` otherwise.
 
 | Role | Provider | Model |
 | --- | --- | --- |
 | Solution 1 | Groq | `openai/gpt-oss-120b` |
+| Solution 1 fallback (on 429) | Groq | `openai/gpt-oss-20b` |
 | Solution 2 | Cohere | `command-a-03-2025` |
 | Judge | Google Gemini | `gemini-3.6-flash` |
 | Chat title generation | Groq | `openai/gpt-oss-20b` |
@@ -631,6 +657,8 @@ Runs ESLint over the frontend source.
 | Logout or protected routes hang | Confirm Redis is running and `REDIS_HOST`/`REDIS_PORT` are correct. |
 | Google login redirects incorrectly | Confirm `GOOGLE_CALLBACK_URL` matches the Google Cloud OAuth redirect URI. |
 | Arena response fails | Confirm `GROQ_API_KEY` and `COHERE_API_KEY` are valid. |
+| Arena request returns `429` | An AI provider's rate limit was reached (often Groq's free-tier tokens-per-minute). Wait a minute and retry; check the backend logs for which provider failed. |
+| Production auth or API calls fail on Vercel | Confirm `Frontend/vercel.json` points to the current Render URL and `VITE_API_URL` is unset. |
 | Internet search is unavailable | Add `TAVILY_API_KEY` or run without web search. |
 | Code blocks do not highlight as expected | Confirm `highlight.js` is installed in the frontend. |
 

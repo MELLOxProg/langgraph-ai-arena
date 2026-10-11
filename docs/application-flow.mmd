@@ -22,7 +22,7 @@ end
 subgraph group_arena["AI arena"]
   node_arena_graph{{"Arena workflow<br/>LangGraph workflow<br/>[graph.ai.ts]"}}
   node_model_factory["Model provider factory<br/>AI provider config<br/>[model.ai.ts]"]
-  node_solution_models["Independent solutions<br/>Groq + Cohere"]
+  node_solution_models["Independent solutions<br/>Groq + Cohere<br/>(Groq 20b fallback on 429)"]
   node_gemini_judge["Gemini judge<br/>scoring model"]
 end
 
