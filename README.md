@@ -144,6 +144,40 @@ class node_chat_store,node_mongo,node_redis,node_google_oauth,node_tavily toneRo
 | Authentication | JWT cookies, bcryptjs, Passport Google OAuth |
 | Markdown/code rendering | Custom markdown renderer, highlight.js |
 
+## Production Hosting
+
+The frontend is a static Vite SPA (`cd Frontend && npm run build`, output in `Frontend/dist`). The backend is a long-running Node.js/Express service (`cd Backend && npm run build && npm start`, output in `Backend/dist`). Keep these as separate services unless the chosen host can serve the static build and proxy `/api` and `/invoke` to the backend. Configure SPA history fallback to `index.html` for client-side routes such as `/login` and `/register`.
+
+Use a persistent Node service rather than a short-lived serverless function: chat requests synchronously run the multi-model arena graph and may exceed function request-duration limits. The app has no file uploads, scheduled/background jobs, or WebSockets. MongoDB stores users, chats, and messages; Redis stores logout token revocations. Both must be reachable from the backend, and outbound access to the configured AI and search providers must be allowed.
+
+For split hosting, use HTTPS sibling subdomains such as `app.example.com` and `api.example.com`. They remain same-site for the existing `SameSite=Lax` cookie. If the frontend and API are on different registrable domains, use a same-origin reverse proxy instead; do not assume the current cookie will work cross-site. The frontend sends cookies with credentials, so the API must allow the exact frontend origin and credentials.
+
+### Deployment Checklist
+
+**Code and build**
+
+- Build the frontend with `cd Frontend && npm ci && npm run build` and publish `Frontend/dist` as static files.
+- Build and run the backend with `cd Backend && npm ci && npm run build` and `npm start`; run it as a persistent service with the provider's assigned `PORT`.
+- Set frontend `VITE_API_URL` to the HTTPS API origin for split hosting. Leave it unset for same-origin hosting; development retains the local `:3000` fallback.
+- Keep `VITE_*` values public and never put credentials in them. Do not commit `.env` files.
+
+**Provider configuration**
+
+- Set backend `NODE_ENV=production`, `PORT`, a strong private `JWT_SECRET`, `MONGO_URI`, and either `REDIS_URL` (prefer `rediss://` when provided) or `REDIS_HOST`, `REDIS_PORT`, and `REDIS_PASSWORD`.
+- Set `CLIENT_URL` to the frontend HTTPS origin, `SERVER_URL` to the public API HTTPS origin, and `FRONTEND_ORIGINS` to the exact frontend origin (no trailing slash). Set `GOOGLE_CALLBACK_URL` to `${SERVER_URL}/api/auth/google/callback` and register that exact callback URI in Google Cloud.
+- Configure provider credentials server-side as needed: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_API_KEY`, `GROQ_API_KEY`, `COHERE_API_KEY`, `MISTRAL_API_KEY`, and `TAVILY_API_KEY`.
+- Allow backend network access to MongoDB and Redis, restrict database access to the backend where possible, and confirm outbound HTTPS access to the model/search providers. Configure HTTPS and SPA fallback at the frontend host or reverse proxy.
+- Choose a Node runtime supported by the installed dependencies. Confirm the host permits requests lasting as long as arena model calls; no provider-specific timeout or memory limit has been validated here.
+
+**Post-deployment verification**
+
+- Open the frontend and verify direct navigation/refresh on `/login` and `/register` returns the SPA.
+- Register or log in, reload the page, submit an arena prompt, reopen a saved chat, delete a chat, and log out. Check browser network requests for credentialed HTTPS calls and absence of CORS or cookie errors.
+- Test Google OAuth if enabled and confirm its redirect URI and final redirect use the configured production origins.
+- Review backend logs and provider dashboards for startup, MongoDB/Redis connectivity, and model API errors. No dedicated health endpoint is currently defined; use the host's process status or configure an HTTP check only if the selected host requires one.
+
+The backend environment variables already used by the app are `PORT`, `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`, `SERVER_URL`, `GOOGLE_CALLBACK_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`, `COHERE_API_KEY`, `GROQ_API_KEY`, `TAVILY_API_KEY`, `REDIS_HOST`, `REDIS_PORT`, and `REDIS_PASSWORD`. `FRONTEND_ORIGINS` controls API CORS; `REDIS_URL` is an additional supported Redis connection option. The frontend optionally uses `VITE_API_URL`.
+
 ## Folder Structure
 
 ```text

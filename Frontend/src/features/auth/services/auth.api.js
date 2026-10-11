@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || `http://${window.location.hostname}:3000`;
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? `http://${window.location.hostname}:3000` : '');
 const api = axios.create({ baseURL: API_BASE_URL, withCredentials: true });
 export const register = async (payload) =>
   (await api.post("/api/auth/register", payload)).data;

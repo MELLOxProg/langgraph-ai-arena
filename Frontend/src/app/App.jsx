@@ -7,7 +7,7 @@ import Register from '../features/auth/pages/Register'
 import Protected from '../features/auth/components/Protected'
 import { useAuth } from '../features/auth/hooks/useAuth'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:3000`
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? `http://${window.location.hostname}:3000` : '')
 
 let msgId = 0
 const nextId = () => ++msgId

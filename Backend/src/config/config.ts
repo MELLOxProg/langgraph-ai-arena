@@ -18,6 +18,7 @@ const config = {
     COHERE_API_KEY: process.env.COHERE_API_KEY || "",
     GROQ_API_KEY: process.env.GROQ_API_KEY || "",
     TAVILY_API_KEY: process.env.TAVILY_API_KEY || "",
+    REDIS_URL: process.env.REDIS_URL || "",
     REDIS_HOST: process.env.REDIS_HOST || "127.0.0.1",
     REDIS_PORT: Number(process.env.REDIS_PORT || 6379),
     REDIS_PASSWORD: process.env.REDIS_PASSWORD || undefined,
