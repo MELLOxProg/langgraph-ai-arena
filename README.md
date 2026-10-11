@@ -3,7 +3,7 @@
 
 <p align="center">
   <a href="https://langgraph-ai-arena.vercel.app/">
-    <img src="https://img.shields.io/badge/🚀_Live_Demo-langgraph--ai--arena.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+    <img src="https://img.shields.io/badge/%F0%9F%9A%80_Live_Demo-langgraph--ai--arena.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
   </a>
 </p>
 
